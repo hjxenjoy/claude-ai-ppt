@@ -6,10 +6,10 @@
 /* ── CSS 变量 ─────────────────────────────────────────────── */
 :root {
   /* 主色调 */
-  --color-primary:        #7C3AED;
-  --color-primary-light:  #A78BFA;
-  --color-primary-dark:   #5B21B6;
-  --color-primary-muted:  #7C3AED1A;
+  --color-primary:        #D97757;
+  --color-primary-light:  #E8A882;
+  --color-primary-dark:   #B85C35;
+  --color-primary-muted:  #D977571A;
 
   /* 背景层次 */
   --color-bg:             #0F0F0F;
