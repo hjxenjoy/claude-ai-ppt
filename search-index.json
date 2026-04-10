@@ -142,5 +142,113 @@
     "chapter": "第四章：.claude 目录完全指南",
     "href": "/chapters/04-dot-claude/index.html#s8",
     "body": "Memory 系统让 Claude 跨会话保留信息。类型：user/project/feedback/reference。MEMORY.md 是索引文件每次自动加载。主动告知 Claude 需要记忆的内容，它会自动写入 memory/ 目录。"
+  },
+  {
+    "title": "5.1 MCP 是什么",
+    "chapter": "第五章：MCP 协议",
+    "href": "/chapters/05-mcp/index.html#s1",
+    "body": "MCP 是 Anthropic 推出的开放协议，让 Claude 通过标准化接口连接外部工具。核心概念：MCP Server/Client/Tool/Resource/Prompt。两种传输模式：stdio 本地进程和 SSE 远程服务。"
+  },
+  {
+    "title": "5.2 配置 MCP 服务器",
+    "chapter": "第五章：MCP 协议",
+    "href": "/chapters/05-mcp/index.html#s2",
+    "body": "在 settings.json 的 mcpServers 字段配置。stdio 模式配置 command/args/env，SSE 模式配置 type/url/headers。env 和 headers 中可用 $VAR_NAME 引用系统环境变量避免密钥硬编码。"
+  },
+  {
+    "title": "5.3 GitHub MCP",
+    "chapter": "第五章：MCP 协议",
+    "href": "/chapters/05-mcp/index.html#s3",
+    "body": "GitHub MCP 服务器让 Claude 直接操作 GitHub。可用工具：search_repositories/get_file_contents/list_issues/create_issue/create_pull_request/create_review/push_files/search_code。"
+  },
+  {
+    "title": "5.4 文件系统 MCP",
+    "chapter": "第五章：MCP 协议",
+    "href": "/chapters/05-mcp/index.html#s4",
+    "body": "文件系统 MCP 提供对本地文件系统更精细的控制，支持目录白名单。适合跨项目文件搜索、文档批量处理、配置文件管理。"
+  },
+  {
+    "title": "5.5 数据库 MCP",
+    "chapter": "第五章：MCP 协议",
+    "href": "/chapters/05-mcp/index.html#s5",
+    "body": "支持 SQLite 和 PostgreSQL MCP 服务器。可用于数据探索、SQL 优化、数据分析。注意：不要连接生产数据库，建议连接只读副本。"
+  },
+  {
+    "title": "5.6 自定义 MCP 服务器",
+    "chapter": "第五章：MCP 协议",
+    "href": "/chapters/05-mcp/index.html#s6",
+    "body": "用 Node.js 实现自定义 MCP 服务器：安装 @modelcontextprotocol/sdk，实现 ListToolsRequestSchema 和 CallToolRequestSchema 处理器，通过 StdioServerTransport 启动。"
+  },
+  {
+    "title": "6.1 API 密钥与鉴权",
+    "chapter": "第六章：Anthropic API 使用",
+    "href": "/chapters/06-api/index.html#s1",
+    "body": "从 Anthropic Console 获取 API Key。安全配置：使用 ANTHROPIC_API_KEY 环境变量或 .env 文件，将 .env 加入 .gitignore，禁止硬编码到代码中。"
+  },
+  {
+    "title": "6.2 Messages API 基础",
+    "chapter": "第六章：Anthropic API 使用",
+    "href": "/chapters/06-api/index.html#s2",
+    "body": "Messages API 必填参数：model/max_tokens/messages。可选：system 系统提示，temperature 创意度（代码任务建议设为 0），top_p 核采样。Python 和 Node.js SDK 均自动读取环境变量。"
+  },
+  {
+    "title": "6.3 流式响应",
+    "chapter": "第六章：Anthropic API 使用",
+    "href": "/chapters/06-api/index.html#s3",
+    "body": "流式响应让输出逐字显示。Python 使用 client.messages.stream() 上下文管理器，Node.js 使用 async for await 遍历 chunk。流结束后可通过 get_final_message() 获取完整用量数据。"
+  },
+  {
+    "title": "6.4 Tool Use 工具调用",
+    "chapter": "第六章：Anthropic API 使用",
+    "href": "/chapters/06-api/index.html#s4",
+    "body": "Tool Use 两轮调用循环：第一轮 Claude 返回 tool_use 块，执行工具函数，将结果以 tool_result 类型返回；第二轮 Claude 根据结果生成最终回答。工具通过 input_schema 定义参数。"
+  },
+  {
+    "title": "6.5 Vision 图像理解",
+    "chapter": "第六章：Anthropic API 使用",
+    "href": "/chapters/06-api/index.html#s5",
+    "body": "支持 URL 和 base64 两种图片输入方式。支持格式：jpeg/png/gif/webp，单张最大 5MB，单次最多 20 张。用于 UI 问题分析、架构图解读、截图内容提取等场景。"
+  },
+  {
+    "title": "6.6 Prompt Caching",
+    "chapter": "第六章：Anthropic API 使用",
+    "href": "/chapters/06-api/index.html#s6",
+    "body": "Prompt Caching 缓存重复的长 prompt，降低 90% 输入 token 费用。通过 cache_control: {type: 'ephemeral'} 标记缓存位置。最小缓存 token：Sonnet 1024，Haiku 2048。有效期约 5 分钟。"
+  },
+  {
+    "title": "6.7 SDK 完整示例",
+    "chapter": "第六章：Anthropic API 使用",
+    "href": "/chapters/06-api/index.html#s7",
+    "body": "Python SDK 多轮对话封装：维护 history 数组实现上下文保持。Node.js SDK 支持 maxRetries 和 timeout 配置，内置自动重试。SDK 均自动读取 ANTHROPIC_API_KEY 环境变量。"
+  },
+  {
+    "title": "7.1 Agent 工具详解",
+    "chapter": "第七章：Agent 与自动化",
+    "href": "/chapters/07-agent/index.html#s1",
+    "body": "Agent 工具参数：description 简短描述，prompt 自包含任务说明，subagent_type 专用类型，isolation worktree 独立 Git 工作树，run_in_background 后台运行。Prompt 必须自包含，包含背景和要求。"
+  },
+  {
+    "title": "7.2 Sub-agent 拆分策略",
+    "chapter": "第七章：Agent 与自动化",
+    "href": "/chapters/07-agent/index.html#s2",
+    "body": "何时拆分：子任务无依赖、代码量超 2000 行、需并行操作多模块。划分原则：单一职责、输入输出明确、可独立验证、避免共享写入。从叶子模块开始逐步执行。"
+  },
+  {
+    "title": "7.3 并行 Agent",
+    "chapter": "第七章：Agent 与自动化",
+    "href": "/chapters/07-agent/index.html#s3",
+    "body": "在同一条消息中发起多个 Agent 调用实现并行执行。分成多条消息则是串行。并行结果汇总模式：同时收集多源信息，最后统一分析。"
+  },
+  {
+    "title": "7.4 Headless 模式",
+    "chapter": "第七章：Agent 与自动化",
+    "href": "/chapters/07-agent/index.html#s4",
+    "body": "通过 claude -p 非交互式运行，适合 CI/CD 和脚本集成。支持 --output-format json 和 --cwd 参数。GitHub Actions 集成：自动审查 PR 代码变更并发布评论。"
+  },
+  {
+    "title": "7.5 自动化工作流案例",
+    "chapter": "第七章：Agent 与自动化",
+    "href": "/chapters/07-agent/index.html#s5",
+    "body": "案例一：Git pre-push Hook 自动审查，检测 Critical 问题时阻止推送。案例二：cron 定时生成技术周报，分析 git log 并发送 Slack 通知。"
   }
 ]
