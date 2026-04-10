@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>第六章：Anthropic API 使用 — Claude AI 从入门到精通</title>
+  <meta name="description" content="Anthropic API 完整教程：Messages API、流式响应、Tool Use、Vision、Prompt Caching 与 SDK 使用。" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+
+  <header class="top-bar">
+    <button class="sidebar-toggle" aria-label="打开菜单" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <line x1="2" y1="4.5" x2="16" y2="4.5"/>
+        <line x1="2" y1="9"   x2="16" y2="9"/>
+        <line x1="2" y1="13.5" x2="16" y2="13.5"/>
+      </svg>
+    </button>
+    <a class="top-bar__logo" href="/index.html">
+      <div class="top-bar__logo-icon">C</div>
+      <span class="top-bar__logo-text">Claude 教程</span>
+    </a>
+    <div class="top-bar__search">
+      <span class="top-bar__search-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="5.5" cy="5.5" r="4"/><line x1="9" y1="9" x2="13" y2="13"/>
+        </svg>
+      </span>
+      <input class="top-bar__search-input" type="search" placeholder="搜索文档… ( / )" aria-label="搜索文档" autocomplete="off" spellcheck="false" />
+    </div>
+    <nav class="top-bar__actions">
+      <a class="top-bar__action-btn" href="https://github.com/anthropics/claude-code" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.88 10.95.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.42.36.79 1.07.79 2.15v3.19c0 .31.21.67.8.56C20.21 21.41 23.5 17.09 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </header>
+
+  <aside class="sidebar" aria-label="章节导航"></aside>
+  <div class="sidebar-overlay" aria-hidden="true"></div>
+
+  <div class="page-wrapper">
+    <div class="main-layout">
+      <div class="content-wrapper">
+        <article class="content">
+
+          <div class="content-meta">
+            <a href="/index.html">首页</a>
+            <span class="content-meta__separator">/</span>
+            <span>第六章</span>
+          </div>
+
+          <h1 id="top">第六章：Anthropic API 使用教程</h1>
+
+          <p>Anthropic API 让你可以在自己的应用中集成 Claude 的能力。本章从 API 基础到高级特性逐一讲解，包含 Python 和 Node.js 的完整代码示例。</p>
+
+          <!-- ── 6.1 ─────────────────────────────────────────── -->
+          <h2 id="s1">6.1 API 密钥与鉴权</h2>
+
+          <h3>获取 API Key</h3>
+          <ol>
+            <li>访问 Anthropic Console（console.anthropic.com）</li>
+            <li>注册并完成账号验证</li>
+            <li>进入 API Keys 页面，点击「Create Key」</li>
+            <li>复制密钥（只显示一次，请妥善保存）</li>
+          </ol>
+
+          <h3>安全配置</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash"># 方式一：环境变量（推荐）
+export ANTHROPIC_API_KEY="sk-ant-api03-..."
+
+# 方式二：.env 文件（本地开发）
+echo "ANTHROPIC_API_KEY=sk-ant-api03-..." >> .env
+echo ".env" >> .gitignore</code></pre>
+          </div>
+
+          <!-- ── 6.2 ─────────────────────────────────────────── -->
+          <h2 id="s2">6.2 Messages API 基础</h2>
+
+          <h3>Python 示例</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-python">import anthropic
+
+client = anthropic.Anthropic()  # 自动读取 ANTHROPIC_API_KEY
+
+message = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system="你是一名专业的代码审查员，擅长发现安全漏洞。",
+    messages=[
+        {"role": "user", "content": "请审查以下代码：\n```python\npassword = input()\nif password == '123456':\n    login()\n```"}
+    ]
+)
+
+print(message.content[0].text)</code></pre>
+          </div>
+
+          <h3>Node.js 示例</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">javascript</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-javascript">import Anthropic from '@anthropic-ai/sdk';
+
+const client = new Anthropic(); // 自动读取 ANTHROPIC_API_KEY
+
+const message = await client.messages.create({
+  model: 'claude-sonnet-4-6',
+  max_tokens: 1024,
+  system: '你是一名专业的代码审查员，擅长发现安全漏洞。',
+  messages: [
+    { role: 'user', content: '请审查以下代码...' }
+  ],
+});
+
+console.log(message.content[0].text);</code></pre>
+          </div>
+
+          <h3>关键参数说明</h3>
+          <table>
+            <thead>
+              <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>model</code></td><td>string</td><td>模型 ID，如 <code>claude-sonnet-4-6</code></td></tr>
+              <tr><td><code>max_tokens</code></td><td>number</td><td>输出 token 上限，必填</td></tr>
+              <tr><td><code>system</code></td><td>string</td><td>系统提示，设定角色和规则</td></tr>
+              <tr><td><code>messages</code></td><td>array</td><td>对话消息数组，role 为 user/assistant</td></tr>
+              <tr><td><code>temperature</code></td><td>0–1</td><td>创意度，默认 1，代码任务建议 0</td></tr>
+              <tr><td><code>top_p</code></td><td>0–1</td><td>核采样，与 temperature 二选一</td></tr>
+            </tbody>
+          </table>
+
+          <!-- ── 6.3 ─────────────────────────────────────────── -->
+          <h2 id="s3">6.3 流式响应</h2>
+
+          <p>流式响应让输出逐字显示，适合聊天界面和长文本生成场景。</p>
+
+          <h3>Python 流式</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-python">import anthropic
+
+client = anthropic.Anthropic()
+
+with client.messages.stream(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "写一首关于代码的诗"}],
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+
+# 流结束后获取完整消息
+final_message = stream.get_final_message()
+print(f"\n\n用量：{final_message.usage}")</code></pre>
+          </div>
+
+          <h3>Node.js 流式（SSE）</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">javascript</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-javascript">const stream = await client.messages.stream({
+  model: 'claude-sonnet-4-6',
+  max_tokens: 1024,
+  messages: [{ role: 'user', content: '写一首关于代码的诗' }],
+});
+
+// 逐 chunk 处理
+for await (const chunk of stream) {
+  if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+    process.stdout.write(chunk.delta.text);
+  }
+}
+
+const finalMessage = await stream.finalMessage();
+console.log('\n用量：', finalMessage.usage);</code></pre>
+          </div>
+
+          <!-- ── 6.4 ─────────────────────────────────────────── -->
+          <h2 id="s4">6.4 Tool Use（工具调用）</h2>
+
+          <p>Tool Use 让 Claude 可以调用你定义的函数，实现数据查询、计算、外部 API 调用等能力。</p>
+
+          <h3>完整调用循环（Python）</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-python">import anthropic
+import json
+
+client = anthropic.Anthropic()
+
+# 定义工具
+tools = [
+    {
+        "name": "get_weather",
+        "description": "获取指定城市的当前天气",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "city": {"type": "string", "description": "城市名称"},
+                "unit": {"type": "string", "enum": ["celsius", "fahrenheit"], "description": "温度单位"},
+            },
+            "required": ["city"],
+        },
+    }
+]
+
+messages = [{"role": "user", "content": "北京今天天气怎么样？"}]
+
+# 第一轮：Claude 决定调用工具
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    tools=tools,
+    messages=messages,
+)
+
+# 处理工具调用
+if response.stop_reason == "tool_use":
+    tool_use_block = next(b for b in response.content if b.type == "tool_use")
+
+    # 执行工具函数
+    tool_result = {"temperature": 18, "condition": "晴天", "humidity": "45%"}
+
+    # 将工具结果返回给 Claude
+    messages.append({"role": "assistant", "content": response.content})
+    messages.append({
+        "role": "user",
+        "content": [{
+            "type": "tool_result",
+            "tool_use_id": tool_use_block.id,
+            "content": json.dumps(tool_result, ensure_ascii=False),
+        }]
+    })
+
+    # 第二轮：Claude 根据工具结果生成最终回答
+    final_response = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=1024,
+        tools=tools,
+        messages=messages,
+    )
+    print(final_response.content[0].text)</code></pre>
+          </div>
+
+          <!-- ── 6.5 ─────────────────────────────────────────── -->
+          <h2 id="s5">6.5 Vision（图像理解）</h2>
+
+          <h3>URL 方式</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-python">message = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    messages=[{
+        "role": "user",
+        "content": [
+            {
+                "type": "image",
+                "source": {
+                    "type": "url",
+                    "url": "https://example.com/screenshot.png",
+                },
+            },
+            {"type": "text", "text": "这张截图中有哪些 UI 问题？"},
+        ],
+    }],
+)
+print(message.content[0].text)</code></pre>
+          </div>
+
+          <h3>Base64 方式（本地图片）</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-python">import base64
+
+with open("diagram.png", "rb") as f:
+    image_data = base64.standard_b64encode(f.read()).decode("utf-8")
+
+message = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    messages=[{
+        "role": "user",
+        "content": [
+            {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": image_data,
+                },
+            },
+            {"type": "text", "text": "解释这个架构图"},
+        ],
+    }],
+)</code></pre>
+          </div>
+
+          <p>支持的图片格式：<code>image/jpeg</code>、<code>image/png</code>、<code>image/gif</code>、<code>image/webp</code>，单张最大 5MB，单次请求最多 20 张图。</p>
+
+          <!-- ── 6.6 ─────────────────────────────────────────── -->
+          <h2 id="s6">6.6 Prompt Caching</h2>
+
+          <p>Prompt Caching 将重复的长 prompt（如系统提示、大型文档）缓存在服务端，后续请求直接复用缓存，可降低 90% 输入 token 费用，并减少延迟。</p>
+
+          <h3>启用方式</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-python">response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    system=[
+        {
+            "type": "text",
+            "text": "你是一名法律顾问助手。",
+        },
+        {
+            "type": "text",
+            "text": very_long_legal_document,  # 可能有几万 token 的长文档
+            "cache_control": {"type": "ephemeral"},  # 标记此处需要缓存
+        }
+    ],
+    messages=[{"role": "user", "content": "第 3 条第 2 款的含义是什么？"}],
+)</code></pre>
+          </div>
+
+          <h3>缓存策略建议</h3>
+          <table>
+            <thead>
+              <tr><th>场景</th><th>建议</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>多轮问答同一文档</td><td>将文档放在 system 末尾并标记缓存</td></tr>
+              <tr><td>固定工具集</td><td>将 tools 定义列表标记缓存</td></tr>
+              <tr><td>多用户共享系统提示</td><td>系统提示设为缓存，用户消息动态变化</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout--info">
+            <div class="callout__icon">ℹ️</div>
+            <div class="callout__body">
+              <div class="callout__title">缓存生效条件</div>
+              <p>缓存最小 token 数：Sonnet 模型为 1024 tokens，Haiku 为 2048 tokens。缓存有效期约 5 分钟，活跃使用可自动续期。可通过响应的 <code>usage.cache_read_input_tokens</code> 字段确认是否命中缓存。</p>
+            </div>
+          </div>
+
+          <!-- ── 6.7 ─────────────────────────────────────────── -->
+          <h2 id="s7">6.7 SDK 完整示例</h2>
+
+          <h3>Python SDK：多轮对话封装</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">python</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-python">import anthropic
+from typing import Optional
+
+class ClaudeChat:
+    def __init__(self, system: Optional[str] = None, model: str = "claude-sonnet-4-6"):
+        self.client = anthropic.Anthropic()
+        self.model = model
+        self.system = system
+        self.history: list = []
+
+    def chat(self, user_message: str, max_tokens: int = 2048) -> str:
+        self.history.append({"role": "user", "content": user_message})
+
+        kwargs = {
+            "model": self.model,
+            "max_tokens": max_tokens,
+            "messages": self.history,
+        }
+        if self.system:
+            kwargs["system"] = self.system
+
+        response = self.client.messages.create(**kwargs)
+        assistant_message = response.content[0].text
+
+        self.history.append({"role": "assistant", "content": assistant_message})
+        return assistant_message
+
+    def reset(self):
+        self.history = []
+
+
+# 使用示例
+chat = ClaudeChat(system="你是一名 Python 专家，回答要简洁准确。")
+print(chat.chat("什么是装饰器？"))
+print(chat.chat("给我一个实际的使用例子"))  # 保持上下文</code></pre>
+          </div>
+
+          <h3>Node.js SDK：带重试的客户端封装</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">javascript</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-javascript">import Anthropic from '@anthropic-ai/sdk';
+
+// SDK 内置自动重试（默认 2 次）
+const client = new Anthropic({
+  maxRetries: 3,
+  timeout: 60 * 1000, // 60 秒超时
+});
+
+async function askClaude(prompt, options = {}) {
+  const response = await client.messages.create({
+    model: options.model ?? 'claude-sonnet-4-6',
+    max_tokens: options.maxTokens ?? 1024,
+    system: options.system,
+    messages: [{ role: 'user', content: prompt }],
+  });
+  return response.content[0].text;
+}
+
+// 使用示例
+const result = await askClaude('用一句话解释递归', {
+  system: '用通俗易懂的方式回答，避免专业术语',
+  maxTokens: 200,
+});
+console.log(result);</code></pre>
+          </div>
+
+        </article>
+
+        <nav class="pagination">
+          <a class="pagination__item" href="/chapters/05-mcp/index.html">
+            <span class="pagination__label">← 上一章</span>
+            <span class="pagination__title">第五章：MCP 协议</span>
+          </a>
+          <a class="pagination__item pagination__item--next" href="/chapters/07-agent/index.html">
+            <span class="pagination__label">下一章 →</span>
+            <span class="pagination__title">第七章：Agent 与自动化</span>
+          </a>
+        </nav>
+      </div>
+
+      <nav class="toc-sidebar" aria-label="页内目录">
+        <div class="toc-sidebar__title">本章目录</div>
+        <div class="toc-list">
+          <a class="toc-item" href="#s1">6.1 API 密钥与鉴权</a>
+          <a class="toc-item" href="#s2">6.2 Messages API 基础</a>
+          <a class="toc-item toc-item--h3" href="#s2">关键参数说明</a>
+          <a class="toc-item" href="#s3">6.3 流式响应</a>
+          <a class="toc-item" href="#s4">6.4 Tool Use</a>
+          <a class="toc-item" href="#s5">6.5 Vision</a>
+          <a class="toc-item" href="#s6">6.6 Prompt Caching</a>
+          <a class="toc-item" href="#s7">6.7 SDK 完整示例</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="/assets/js/nav.js"></script>
+  <script src="/assets/js/search.js"></script>
+  <script>
+    function copyCode(btn) {
+      const code = btn.closest('.code-block').querySelector('code');
+      navigator.clipboard.writeText(code.innerText).then(() => {
+        btn.textContent = '已复制！'; btn.classList.add('is-copied');
+        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('is-copied'); }, 2000);
+      });
+    }
+    (function () {
+      const ids = ['s1','s2','s3','s4','s5','s6','s7'];
+      const tocLinks = document.querySelectorAll('.toc-item');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('is-active'));
+            const a = document.querySelector(`.toc-item[href="#${e.target.id}"]`);
+            if (a) a.classList.add('is-active');
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      ids.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+    })();
+  </script>
+</body>
+</html>
