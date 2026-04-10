@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>第五章：MCP 协议 — Claude AI 从入门到精通</title>
+  <meta name="description" content="模型上下文协议（MCP）详解：配置 MCP 服务器、GitHub MCP、文件系统、数据库与自定义 MCP 开发。" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+
+  <header class="top-bar">
+    <button class="sidebar-toggle" aria-label="打开菜单" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <line x1="2" y1="4.5" x2="16" y2="4.5"/>
+        <line x1="2" y1="9"   x2="16" y2="9"/>
+        <line x1="2" y1="13.5" x2="16" y2="13.5"/>
+      </svg>
+    </button>
+    <a class="top-bar__logo" href="/index.html">
+      <div class="top-bar__logo-icon">C</div>
+      <span class="top-bar__logo-text">Claude 教程</span>
+    </a>
+    <div class="top-bar__search">
+      <span class="top-bar__search-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="5.5" cy="5.5" r="4"/><line x1="9" y1="9" x2="13" y2="13"/>
+        </svg>
+      </span>
+      <input class="top-bar__search-input" type="search" placeholder="搜索文档… ( / )" aria-label="搜索文档" autocomplete="off" spellcheck="false" />
+    </div>
+    <nav class="top-bar__actions">
+      <a class="top-bar__action-btn" href="https://github.com/anthropics/claude-code" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.88 10.95.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.42.36.79 1.07.79 2.15v3.19c0 .31.21.67.8.56C20.21 21.41 23.5 17.09 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </header>
+
+  <aside class="sidebar" aria-label="章节导航"></aside>
+  <div class="sidebar-overlay" aria-hidden="true"></div>
+
+  <div class="page-wrapper">
+    <div class="main-layout">
+      <div class="content-wrapper">
+        <article class="content">
+
+          <div class="content-meta">
+            <a href="/index.html">首页</a>
+            <span class="content-meta__separator">/</span>
+            <span>第五章</span>
+          </div>
+
+          <h1 id="top">第五章：MCP（模型上下文协议）</h1>
+
+          <p>MCP（Model Context Protocol）是 Anthropic 推出的开放协议，让 Claude 能够通过标准化接口连接外部数据源和工具。配置好 MCP 服务器后，Claude 可以直接操作 GitHub、数据库、文件系统等外部系统，大幅扩展其能力边界。</p>
+
+          <!-- ── 5.1 ─────────────────────────────────────────── -->
+          <h2 id="s1">5.1 MCP 是什么</h2>
+
+          <p>MCP 定义了 AI 模型与外部工具之间通信的标准协议，可以理解为 AI 世界的"USB 接口"——任何实现了 MCP 协议的服务器，都可以被任何支持 MCP 的 AI 客户端调用。</p>
+
+          <h3>核心概念</h3>
+          <table>
+            <thead>
+              <tr><th>概念</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>MCP Server</strong></td><td>提供工具和资源的服务端进程，可以是本地进程或远程 HTTP 服务</td></tr>
+              <tr><td><strong>MCP Client</strong></td><td>调用 MCP 服务的客户端，Claude Code 就是一个 MCP Client</td></tr>
+              <tr><td><strong>Tool</strong></td><td>服务器暴露的可调用函数（如 search_issues、run_query）</td></tr>
+              <tr><td><strong>Resource</strong></td><td>服务器暴露的可读取数据（如文件内容、数据库表结构）</td></tr>
+              <tr><td><strong>Prompt</strong></td><td>服务器提供的预设提示模板</td></tr>
+            </tbody>
+          </table>
+
+          <h3>两种传输模式</h3>
+          <table>
+            <thead>
+              <tr><th>模式</th><th>通信方式</th><th>适用场景</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>stdio</strong></td><td>通过标准输入输出通信</td><td>本地进程，最常用</td></tr>
+              <tr><td><strong>SSE</strong></td><td>HTTP Server-Sent Events</td><td>远程服务器、多客户端共享</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout--info">
+            <div class="callout__icon">ℹ️</div>
+            <div class="callout__body">
+              <div class="callout__title">MCP vs 内置工具的区别</div>
+              <p>Claude Code 内置的 Read/Write/Bash 等工具是硬编码实现；MCP 工具是通过协议动态注册的，任何人都可以开发和分发 MCP 服务器。MCP 让 Claude 的能力可以无限扩展，而无需修改 Claude Code 本身。</p>
+            </div>
+          </div>
+
+          <!-- ── 5.2 ─────────────────────────────────────────── -->
+          <h2 id="s2">5.2 配置 MCP 服务器</h2>
+
+          <p>在 <code>settings.json</code> 的 <code>mcpServers</code> 字段中配置 MCP 服务器：</p>
+
+          <h3>stdio 模式（本地进程）</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">json</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-json">{
+  "mcpServers": {
+    "服务器名称": {
+      "command": "启动命令",
+      "args": ["参数1", "参数2"],
+      "env": {
+        "ENV_VAR": "值"
+      }
+    }
+  }
+}</code></pre>
+          </div>
+
+          <h3>SSE 模式（远程服务）</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">json</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-json">{
+  "mcpServers": {
+    "remote-service": {
+      "type": "sse",
+      "url": "https://your-mcp-server.com/sse",
+      "headers": {
+        "Authorization": "Bearer $YOUR_API_TOKEN"
+      }
+    }
+  }
+}</code></pre>
+          </div>
+
+          <div class="callout callout--tip">
+            <div class="callout__icon">💡</div>
+            <div class="callout__body">
+              <div class="callout__title">环境变量引用</div>
+              <p>在 <code>env</code> 和 <code>headers</code> 中可以用 <code>$VAR_NAME</code> 引用系统环境变量，避免将密钥硬编码到配置文件中。配置文件通常会提交到 Git，务必使用环境变量引用。</p>
+            </div>
+          </div>
+
+          <!-- ── 5.3 ─────────────────────────────────────────── -->
+          <h2 id="s3">5.3 GitHub MCP</h2>
+
+          <p>GitHub MCP 服务器让 Claude 可以直接操作 GitHub：读取 Issue、提交 PR 评论、搜索代码、管理 Workflow 等。</p>
+
+          <h3>配置</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">json</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-json">{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "$GITHUB_TOKEN"
+      }
+    }
+  }
+}</code></pre>
+          </div>
+
+          <p>获取 GitHub Token：GitHub 设置 → Developer settings → Personal access tokens → 勾选 <code>repo</code>、<code>issues</code>、<code>pull_requests</code> 权限。</p>
+
+          <h3>可用工具</h3>
+          <table>
+            <thead>
+              <tr><th>工具</th><th>功能</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>search_repositories</code></td><td>搜索 GitHub 仓库</td></tr>
+              <tr><td><code>get_file_contents</code></td><td>读取仓库中的文件内容</td></tr>
+              <tr><td><code>list_issues</code></td><td>列出仓库 Issue</td></tr>
+              <tr><td><code>create_issue</code></td><td>创建新 Issue</td></tr>
+              <tr><td><code>create_pull_request</code></td><td>创建 Pull Request</td></tr>
+              <tr><td><code>create_review</code></td><td>提交 PR Code Review</td></tr>
+              <tr><td><code>push_files</code></td><td>向仓库推送文件</td></tr>
+              <tr><td><code>search_code</code></td><td>在 GitHub 上搜索代码</td></tr>
+            </tbody>
+          </table>
+
+          <h3>使用场景示例</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code># 分析项目 Issue
+列出 anthropics/claude-code 仓库最新的 10 个 open Issue，
+按优先级分类，并总结主要问题集中在哪些方面
+
+# 自动化 Code Review
+对 PR #123 的每个文件变更进行 Code Review，
+重点检查安全漏洞和性能问题，以行级评论的方式提交
+
+# 跨仓库搜索
+在 GitHub 上搜索使用 @anthropic-ai/sdk 的 Node.js 项目，
+找出最常见的错误处理模式</code></pre>
+          </div>
+
+          <!-- ── 5.4 ─────────────────────────────────────────── -->
+          <h2 id="s4">5.4 文件系统 MCP</h2>
+
+          <p>文件系统 MCP 提供了对本地文件系统更精细的控制，可以设置允许访问的目录白名单。</p>
+
+          <h3>配置</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">json</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-json">{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/me/projects",
+        "/Users/me/documents"
+      ]
+    }
+  }
+}</code></pre>
+          </div>
+
+          <p>args 中列出的路径即为允许访问的目录白名单，Claude 只能读写这些目录下的文件。</p>
+
+          <h3>实用场景</h3>
+          <ul>
+            <li>跨项目文件搜索：在多个项目目录中查找特定代码模式</li>
+            <li>文档批量处理：对 <code>~/documents</code> 中的 Markdown 文件批量格式化</li>
+            <li>配置文件管理：集中管理多个项目的配置文件</li>
+          </ul>
+
+          <!-- ── 5.5 ─────────────────────────────────────────── -->
+          <h2 id="s5">5.5 数据库 MCP</h2>
+
+          <h3>SQLite</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">json</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-json">{
+  "mcpServers": {
+    "sqlite": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "--db-path", "/path/to/database.db"
+      ]
+    }
+  }
+}</code></pre>
+          </div>
+
+          <h3>PostgreSQL</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">json</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-json">{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_URL": "$DATABASE_URL"
+      }
+    }
+  }
+}</code></pre>
+          </div>
+
+          <h3>数据库 MCP 使用场景</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code># 数据探索
+查看数据库中所有表的结构，找出 users 表和 orders 表的关联关系，
+画出 ER 图（用 Mermaid 语法）
+
+# SQL 优化
+分析这个查询的执行计划并给出优化建议：
+SELECT * FROM orders WHERE user_id IN (SELECT id FROM users WHERE status = 'active')
+
+# 数据分析
+统计过去 30 天每天的新注册用户数和订单数，
+找出转化率最高的星期几</code></pre>
+          </div>
+
+          <div class="callout callout--danger">
+            <div class="callout__icon">🔴</div>
+            <div class="callout__body">
+              <div class="callout__title">生产数据库安全警告</div>
+              <p>不要将生产数据库直接连接到 MCP。建议连接只读副本，或在 settings.json 的 permissions 中明确禁止 <code>DELETE</code>、<code>DROP</code>、<code>TRUNCATE</code> 等破坏性操作。</p>
+            </div>
+          </div>
+
+          <!-- ── 5.6 ─────────────────────────────────────────── -->
+          <h2 id="s6">5.6 自定义 MCP 服务器</h2>
+
+          <p>用 Node.js 实现一个最简 MCP 服务器，暴露一个"查询公司内部 API"的工具：</p>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step__number"></div>
+              <div class="step__content">
+                <div class="step__title">初始化项目</div>
+                <div class="step__body">
+                  <div class="code-block">
+                    <div class="code-block__header">
+                      <span class="code-block__lang">bash</span>
+                      <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code class="language-bash">mkdir my-mcp-server && cd my-mcp-server
+npm init -y
+npm install @modelcontextprotocol/sdk</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__number"></div>
+              <div class="step__content">
+                <div class="step__title">实现服务器</div>
+                <div class="step__body">
+                  <div class="code-block">
+                    <div class="code-block__header">
+                      <span class="code-block__lang">javascript</span>
+                      <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code class="language-javascript">// index.js
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import {
+  CallToolRequestSchema,
+  ListToolsRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
+
+const server = new Server(
+  { name: 'my-internal-api', version: '1.0.0' },
+  { capabilities: { tools: {} } }
+);
+
+// 注册工具列表
+server.setRequestHandler(ListToolsRequestSchema, async () => ({
+  tools: [
+    {
+      name: 'get_employee_info',
+      description: '根据员工 ID 查询员工信息',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          employee_id: { type: 'string', description: '员工 ID' },
+        },
+        required: ['employee_id'],
+      },
+    },
+  ],
+}));
+
+// 实现工具逻辑
+server.setRequestHandler(CallToolRequestSchema, async (request) => {
+  if (request.params.name === 'get_employee_info') {
+    const { employee_id } = request.params.arguments;
+
+    // 调用内部 API（此处用模拟数据演示）
+    const data = await fetchInternalAPI(`/employees/${employee_id}`);
+
+    return {
+      content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
+    };
+  }
+  throw new Error(`Unknown tool: ${request.params.name}`);
+});
+
+async function fetchInternalAPI(path) {
+  // 替换为真实的内部 API 调用
+  return { id: 'E001', name: '张三', department: '工程部', title: '高级工程师' };
+}
+
+// 启动服务器
+const transport = new StdioServerTransport();
+await server.connect(transport);</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__number"></div>
+              <div class="step__content">
+                <div class="step__title">注册到 Claude Code</div>
+                <div class="step__body">
+                  <div class="code-block">
+                    <div class="code-block__header">
+                      <span class="code-block__lang">json</span>
+                      <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code class="language-json">{
+  "mcpServers": {
+    "internal-api": {
+      "command": "node",
+      "args": ["/path/to/my-mcp-server/index.js"]
+    }
+  }
+}</code></pre>
+                  </div>
+                  <p>重启 Claude Code 后，即可在会话中直接调用：</p>
+                  <div class="code-block">
+                    <div class="code-block__header">
+                      <span class="code-block__lang">text</span>
+                      <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>查询员工 E001 的信息，并生成一份简短的工作介绍</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </article>
+
+        <nav class="pagination">
+          <a class="pagination__item" href="/chapters/04-dot-claude/index.html">
+            <span class="pagination__label">← 上一章</span>
+            <span class="pagination__title">第四章：.claude 目录完全指南</span>
+          </a>
+          <a class="pagination__item pagination__item--next" href="/chapters/06-api/index.html">
+            <span class="pagination__label">下一章 →</span>
+            <span class="pagination__title">第六章：Anthropic API 使用</span>
+          </a>
+        </nav>
+      </div>
+
+      <nav class="toc-sidebar" aria-label="页内目录">
+        <div class="toc-sidebar__title">本章目录</div>
+        <div class="toc-list">
+          <a class="toc-item" href="#s1">5.1 MCP 是什么</a>
+          <a class="toc-item toc-item--h3" href="#s1">核心概念</a>
+          <a class="toc-item toc-item--h3" href="#s1">传输模式</a>
+          <a class="toc-item" href="#s2">5.2 配置 MCP 服务器</a>
+          <a class="toc-item" href="#s3">5.3 GitHub MCP</a>
+          <a class="toc-item toc-item--h3" href="#s3">可用工具</a>
+          <a class="toc-item" href="#s4">5.4 文件系统 MCP</a>
+          <a class="toc-item" href="#s5">5.5 数据库 MCP</a>
+          <a class="toc-item" href="#s6">5.6 自定义 MCP 服务器</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="/assets/js/nav.js"></script>
+  <script src="/assets/js/search.js"></script>
+  <script>
+    function copyCode(btn) {
+      const code = btn.closest('.code-block').querySelector('code');
+      navigator.clipboard.writeText(code.innerText).then(() => {
+        btn.textContent = '已复制！'; btn.classList.add('is-copied');
+        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('is-copied'); }, 2000);
+      });
+    }
+    (function () {
+      const ids = ['s1','s2','s3','s4','s5','s6'];
+      const tocLinks = document.querySelectorAll('.toc-item');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('is-active'));
+            const a = document.querySelector(`.toc-item[href="#${e.target.id}"]`);
+            if (a) a.classList.add('is-active');
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      ids.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+    })();
+  </script>
+</body>
+</html>
