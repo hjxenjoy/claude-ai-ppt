@@ -250,5 +250,101 @@
     "chapter": "第七章：Agent 与自动化",
     "href": "/chapters/07-agent/index.html#s5",
     "body": "案例一：Git pre-push Hook 自动审查，检测 Critical 问题时阻止推送。案例二：cron 定时生成技术周报，分析 git log 并发送 Slack 通知。"
+  },
+  {
+    "title": "8.1 功能开发",
+    "chapter": "第八章：业务场景最佳实践",
+    "href": "/chapters/08-scenarios/index.html#s1",
+    "body": "功能开发三步流程：需求拆解（列出步骤、识别前后端分工、指出难点）、方案确认后分步编码（每次只实现一个子功能）、编写测试（覆盖正常流程和异常场景）。"
+  },
+  {
+    "title": "8.2 代码审查",
+    "chapter": "第八章：业务场景最佳实践",
+    "href": "/chapters/08-scenarios/index.html#s2",
+    "body": "全面审查维度：安全性（OWASP Top 10）、正确性、可靠性、性能、可维护性，按优先级排序。安全专项审查逐一检查 A01-A07 漏洞，给出发现位置、严重程度和修复代码。"
+  },
+  {
+    "title": "8.3 重构与技术债",
+    "chapter": "第八章：业务场景最佳实践",
+    "href": "/chapters/08-scenarios/index.html#s3",
+    "body": "渐进式重构三步：先分析代码质量问题不修改代码，再补测试覆盖现有行为，最后小步重构每次只改一处。重构后立即运行测试确保绿灯。"
+  },
+  {
+    "title": "8.4 PRD 撰写",
+    "chapter": "第八章：业务场景最佳实践",
+    "href": "/chapters/08-scenarios/index.html#s4",
+    "body": "需求挖掘提示链：让 Claude 先提问把需求想清楚，明确用户痛点、成功定义、差异化和 Out of Scope。PRD 模板包含背景目标、用户故事、功能列表（P0/P1/P2）、流程图、验收标准、里程碑。"
+  },
+  {
+    "title": "8.5 竞品分析",
+    "chapter": "第八章：业务场景最佳实践",
+    "href": "/chapters/08-scenarios/index.html#s5",
+    "body": "竞品分析框架：定位矩阵、功能对比表、用户口碑、差异化洞察。以 AI 代码助手为例对比 GitHub Copilot、Cursor、Windsurf、Claude Code 的核心能力和定价。"
+  },
+  {
+    "title": "8.6 技术文档生成",
+    "chapter": "第八章：业务场景最佳实践",
+    "href": "/chapters/08-scenarios/index.html#s6",
+    "body": "从代码生成 OpenAPI 3.0 文档：扫描 Controller 提取接口信息，生成请求响应示例。生成 README：技术栈徽章、快速开始、安装配置、目录结构、开发指南。"
+  },
+  {
+    "title": "8.7 数据分析",
+    "chapter": "第八章：业务场景最佳实践",
+    "href": "/chapters/08-scenarios/index.html#s7",
+    "body": "日志分析：响应时间分位数、错误率、可疑 IP、慢请求分布、高峰期。数据清洗：用 pandas 标准化字段格式、处理重复数据、输出清洗报告。"
+  },
+  {
+    "title": "8.8 DevOps 辅助",
+    "chapter": "第八章：业务场景最佳实践",
+    "href": "/chapters/08-scenarios/index.html#s8",
+    "body": "Dockerfile 多阶段构建、非 root 用户运行、健康检查。K8s OOMKilled 故障排查。GitHub Actions CI/CD 配置：PR 检查（lint/test/build）和自动部署（滚动更新+回滚）。"
+  },
+  {
+    "title": "9. 实战项目案例总览",
+    "chapter": "第九章：实战项目案例",
+    "href": "/chapters/09-projects/index.html",
+    "body": "六个完整项目案例：门户网站（HTML/CSS/JS）、管理后台（React 18/Ant Design）、贪吃蛇游戏（Canvas）、移动端 APP（React Native/Expo）、Chrome 扩展（划词翻译）、CLI 工具（ai-review）。"
+  },
+  {
+    "title": "10.1 上下文超限处理",
+    "chapter": "第十章：常见问题与避坑",
+    "href": "/chapters/10-faq/index.html#s1",
+    "body": "症状：遗忘早期规则、回答不一致、token 超 80%、响应变慢。解决：任务未完成用 /compact，阶段切换用 /clear，大文件拆分引用。预防：每完成子任务主动压缩。"
+  },
+  {
+    "title": "10.2 拒绝执行操作",
+    "chapter": "第十章：常见问题与避坑",
+    "href": "/chapters/10-faq/index.html#s2",
+    "body": "四类拒绝：安全策略、权限设置、谨慎性确认、能力边界。改写技巧：说明合法目的和背景，不要尝试绕过安全限制。"
+  },
+  {
+    "title": "10.3 权限报错排查",
+    "chapter": "第十章：常见问题与避坑",
+    "href": "/chapters/10-faq/index.html#s3",
+    "body": "常见错误：Tool not allowed、Write permission denied、API Key not set、401 Unauthorized。排查步骤：运行 /doctor、检查 settings.json JSON 语法、确认权限规则。"
+  },
+  {
+    "title": "10.4 输出质量不稳定",
+    "chapter": "第十章：常见问题与避坑",
+    "href": "/chapters/10-faq/index.html#s4",
+    "body": "问题与对策：格式不一致（指定输出格式）、风格不符（CLAUDE.md 加示例）、结果差异大（temperature 设为 0）、遗忘约定（/compact + CLAUDE.md 固化）。"
+  },
+  {
+    "title": "10.5 API 限流与重试",
+    "chapter": "第十章：常见问题与避坑",
+    "href": "/chapters/10-faq/index.html#s5",
+    "body": "限流错误：429 rate_limit_error、529 overloaded_error、413 request_too_large。SDK 内置 max_retries 参数，手动指数退避：1.5s/2.5s/4.5s/8.5s 依次等待重试。"
+  },
+  {
+    "title": "10.6 成本控制技巧",
+    "chapter": "第十章：常见问题与避坑",
+    "href": "/chapters/10-faq/index.html#s6",
+    "body": "降本策略：简单任务用 Haiku（节省 90%）、启用 Prompt Caching（输入降低 90%）、精简系统提示、减少 max_tokens、/compact 压缩历史。通过 /cost 监控会话费用。"
+  },
+  {
+    "title": "10.7 安全注意事项",
+    "chapter": "第十章：常见问题与避坑",
+    "href": "/chapters/10-faq/index.html#s7",
+    "body": "API Key 安全：不提交 Git、使用环境变量、定期轮换。禁止传入真实用户数据和 PII。权限最小化原则配置 deny 规则。CI 环境通过 Secrets 注入 Key，审计 Claude 执行的命令。"
   }
 ]
