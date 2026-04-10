@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>第七章：Agent 与自动化 — Claude AI 从入门到精通</title>
+  <meta name="description" content="Claude Agent 工具详解、Sub-agent 拆分策略、并行 Agent、Headless 模式与 CI/CD 自动化工作流。" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+
+  <header class="top-bar">
+    <button class="sidebar-toggle" aria-label="打开菜单" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <line x1="2" y1="4.5" x2="16" y2="4.5"/>
+        <line x1="2" y1="9"   x2="16" y2="9"/>
+        <line x1="2" y1="13.5" x2="16" y2="13.5"/>
+      </svg>
+    </button>
+    <a class="top-bar__logo" href="/index.html">
+      <div class="top-bar__logo-icon">C</div>
+      <span class="top-bar__logo-text">Claude 教程</span>
+    </a>
+    <div class="top-bar__search">
+      <span class="top-bar__search-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="5.5" cy="5.5" r="4"/><line x1="9" y1="9" x2="13" y2="13"/>
+        </svg>
+      </span>
+      <input class="top-bar__search-input" type="search" placeholder="搜索文档… ( / )" aria-label="搜索文档" autocomplete="off" spellcheck="false" />
+    </div>
+    <nav class="top-bar__actions">
+      <a class="top-bar__action-btn" href="https://github.com/anthropics/claude-code" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.88 10.95.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.42.36.79 1.07.79 2.15v3.19c0 .31.21.67.8.56C20.21 21.41 23.5 17.09 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </header>
+
+  <aside class="sidebar" aria-label="章节导航"></aside>
+  <div class="sidebar-overlay" aria-hidden="true"></div>
+
+  <div class="page-wrapper">
+    <div class="main-layout">
+      <div class="content-wrapper">
+        <article class="content">
+
+          <div class="content-meta">
+            <a href="/index.html">首页</a>
+            <span class="content-meta__separator">/</span>
+            <span>第七章</span>
+          </div>
+
+          <h1 id="top">第七章：Agent 与自动化</h1>
+
+          <p>Agent 模式让 Claude Code 从"问答工具"升级为"自主执行者"——它能拆解复杂任务、调用工具、启动子 Agent，甚至接入 CI/CD 流水线，实现真正的编程自动化。</p>
+
+          <!-- ── 7.1 ─────────────────────────────────────────── -->
+          <h2 id="s1">7.1 Agent 工具详解</h2>
+
+          <p>Claude Code 内置的 <code>Agent</code> 工具允许主 Claude 启动一个独立的子 Agent 来处理子任务，子 Agent 拥有独立的上下文和工具访问权限。</p>
+
+          <h3>参数说明</h3>
+          <table>
+            <thead>
+              <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>description</code></td><td>string</td><td>子 Agent 任务的简短描述（3-5 词）</td></tr>
+              <tr><td><code>prompt</code></td><td>string</td><td>给子 Agent 的完整任务说明，需自包含</td></tr>
+              <tr><td><code>subagent_type</code></td><td>string</td><td>专用 Agent 类型（如 general-purpose、Explore 等）</td></tr>
+              <tr><td><code>isolation</code></td><td>string</td><td>设为 <code>"worktree"</code> 时在独立 Git 工作树中运行</td></tr>
+              <tr><td><code>run_in_background</code></td><td>boolean</td><td>是否后台运行（不阻塞主 Agent）</td></tr>
+            </tbody>
+          </table>
+
+          <h3>编写高质量 Prompt 的要点</h3>
+          <p>子 Agent 没有主 Agent 的上下文记忆，prompt 必须<strong>自包含</strong>：</p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code># ❌ 不好的 prompt（缺少背景）
+修复这个 bug
+
+# ✅ 好的 prompt（自包含）
+修复 src/api/auth.ts 第 42 行的 JWT 验证 bug。
+背景：当 token 过期时，代码抛出未捕获的异常而不是返回 401 状态码。
+要求：
+- 捕获 TokenExpiredError 并返回 { status: 401, message: "Token 已过期" }
+- 不要修改函数签名
+- 修改后运行 npm test 验证</code></pre>
+          </div>
+
+          <!-- ── 7.2 ─────────────────────────────────────────── -->
+          <h2 id="s2">7.2 Sub-agent 拆分策略</h2>
+
+          <h3>何时拆分为子 Agent</h3>
+          <ul>
+            <li>任务可以被明确划分为独立的子任务，且子任务之间无依赖</li>
+            <li>单个任务涉及的代码量超过 2000 行，超出单次上下文处理能力</li>
+            <li>需要对多个模块并行操作（如同时重构前端和后端）</li>
+            <li>需要保护主 Agent 的上下文不被大量中间结果污染</li>
+          </ul>
+
+          <h3>任务边界划分原则</h3>
+          <table>
+            <thead>
+              <tr><th>原则</th><th>说明</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>单一职责</strong></td><td>每个子 Agent 只负责一个明确的模块或功能</td></tr>
+              <tr><td><strong>输入输出明确</strong></td><td>子 Agent 的输入（文件/参数）和输出（结果/产物）要清晰定义</td></tr>
+              <tr><td><strong>可独立验证</strong></td><td>子任务完成后可以独立运行测试验证，不依赖其他子任务</td></tr>
+              <tr><td><strong>避免共享写入</strong></td><td>并行子 Agent 不应同时写入同一文件，防止冲突</td></tr>
+            </tbody>
+          </table>
+
+          <h3>典型拆分示例</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code># 主 Agent 任务：为项目添加国际化支持
+
+# 拆分为 3 个独立子任务：
+子 Agent 1：扫描 src/ 目录，提取所有硬编码中文字符串，
+           生成 locales/zh-CN.json 翻译文件
+
+子 Agent 2：修改 src/components/ 中的 React 组件，
+           将硬编码文本替换为 t('key') 调用
+
+子 Agent 3：安装和配置 react-i18next，
+           修改 main.tsx 初始化 i18n 配置</code></pre>
+          </div>
+
+          <!-- ── 7.3 ─────────────────────────────────────────── -->
+          <h2 id="s3">7.3 并行 Agent</h2>
+
+          <p>在 CLAUDE.md 或自定义 Skill 中，通过在单条消息中发起多个 Agent 调用实现并行执行，可大幅缩短多任务的总用时。</p>
+
+          <div class="callout callout--tip">
+            <div class="callout__icon">💡</div>
+            <div class="callout__body">
+              <div class="callout__title">并行的核心原则</div>
+              <p>将多个 Agent 调用放在<strong>同一条消息</strong>中发出，Claude 会并发执行它们。如果分成多条消息，则是串行执行。</p>
+            </div>
+          </div>
+
+          <h3>并行执行模式</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code># 对以下三个模块并行执行代码审查，同时发起所有任务：
+
+[Agent 1] 审查 src/modules/user/ 下的所有文件，
+重点检查：SQL 注入、权限校验、敏感数据暴露
+
+[Agent 2] 审查 src/modules/payment/ 下的所有文件，
+重点检查：金额计算精度、幂等性、事务完整性
+
+[Agent 3] 审查 src/modules/notification/ 下的所有文件，
+重点检查：消息队列可靠性、重试机制、错误处理
+
+所有 Agent 完成后，汇总三个报告，给出整体安全评分。</code></pre>
+          </div>
+
+          <h3>结果汇总模式</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code># 并行收集多源信息，再统一分析
+
+同时执行：
+1. 搜索 GitHub Issues 中关于性能问题的最新讨论
+2. 读取 src/db/queries.ts 中所有数据库查询
+3. 读取最近一周的 error.log
+
+三项完成后，综合分析性能瓶颈原因并给出优先级排序的优化建议。</code></pre>
+          </div>
+
+          <!-- ── 7.4 ─────────────────────────────────────────── -->
+          <h2 id="s4">7.4 Headless 模式</h2>
+
+          <p>Headless 模式通过 <code>claude -p</code> 非交互式运行，适合 CI/CD 流水线、定时任务和脚本集成。</p>
+
+          <h3>基本用法</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash"># 基本调用
+claude -p "审查 src/ 目录下的安全漏洞，输出 Markdown 报告"
+
+# 输出为 JSON
+claude -p "列出所有 TODO 注释" --output-format json
+
+# 指定工作目录
+claude -p "运行测试并总结失败原因" --cwd /path/to/project
+
+# 自动批准所有权限（用于 CI 环境）
+claude --dangerously-skip-permissions -p "更新所有依赖包到最新版本"</code></pre>
+          </div>
+
+          <h3>GitHub Actions 集成示例</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">yaml</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-yaml"># .github/workflows/ai-review.yml
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run AI Code Review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git diff origin/${{ github.base_ref }}...HEAD > changes.diff
+
+          REVIEW=$(cat changes.diff | claude --dangerously-skip-permissions -p "
+            审查这次 PR 的代码变更。
+            重点检查：
+            1. 安全漏洞（XSS、注入攻击、权限绕过）
+            2. 逻辑错误和边界条件处理
+            3. 性能问题
+
+            输出格式：
+            - 用 Markdown 格式
+            - 每个问题标注严重级别：🔴 Critical / 🟡 Warning / 🟢 Suggestion
+            - 最后给出总体评价
+          ")
+
+          # 将审查结果发布为 PR 评论
+          gh pr comment ${{ github.event.pull_request.number }} --body "$REVIEW"</code></pre>
+          </div>
+
+          <!-- ── 7.5 ─────────────────────────────────────────── -->
+          <h2 id="s5">7.5 自动化工作流案例</h2>
+
+          <h3>案例一：自动化代码审查</h3>
+          <p>结合 Git Hook 实现提交前自动审查：</p>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash">#!/bin/bash
+# .git/hooks/pre-push
+
+echo "🤖 Running Claude Code Review..."
+
+DIFF=$(git diff origin/main...HEAD)
+
+if [ -z "$DIFF" ]; then
+  echo "No changes to review."
+  exit 0
+fi
+
+RESULT=$(echo "$DIFF" | claude --dangerously-skip-permissions -p "
+快速审查这次提交的代码变更（30秒内完成）。
+只报告 Critical 级别的问题（安全漏洞、数据丢失风险）。
+如果没有 Critical 问题，输出：APPROVED
+如果有问题，输出：BLOCKED，然后列出问题。
+")
+
+if echo "$RESULT" | grep -q "BLOCKED"; then
+  echo "❌ Push blocked by AI review:"
+  echo "$RESULT"
+  exit 1
+else
+  echo "✅ AI review passed"
+  exit 0
+fi</code></pre>
+          </div>
+
+          <h3>案例二：定时技术报告生成</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash">#!/bin/bash
+# 每周一早上 9 点通过 cron 运行
+# 0 9 * * 1 /path/to/weekly-report.sh
+
+cd /path/to/project
+
+REPORT=$(claude --dangerously-skip-permissions -p "
+分析本项目过去一周的活动，生成技术周报：
+
+1. 运行 git log --since='7 days ago' --oneline 查看提交记录
+2. 统计各模块的变更量
+3. 识别本周主要完成的功能和修复的 Bug
+4. 找出代码质量指标（如新增的 TODO、过长的函数）
+5. 给出下周建议关注的技术债务
+
+输出 Markdown 格式，附带关键数据统计。
+")
+
+# 发送到 Slack
+curl -X POST "$SLACK_WEBHOOK_URL" \
+  -H 'Content-type: application/json' \
+  --data "{\"text\": \"📊 本周技术周报\n\`\`\`\n$REPORT\n\`\`\`\"}"</code></pre>
+          </div>
+
+          <div class="callout callout--warning">
+            <div class="callout__icon">⚠️</div>
+            <div class="callout__body">
+              <div class="callout__title">Headless 模式安全注意事项</div>
+              <p><code>--dangerously-skip-permissions</code> 会自动批准所有操作，在 CI 环境中务必通过 <code>permissions.allow/deny</code> 精确限制可操作的范围，防止 Claude 执行意外的破坏性操作。</p>
+            </div>
+          </div>
+
+        </article>
+
+        <nav class="pagination">
+          <a class="pagination__item" href="/chapters/06-api/index.html">
+            <span class="pagination__label">← 上一章</span>
+            <span class="pagination__title">第六章：Anthropic API 使用</span>
+          </a>
+          <a class="pagination__item pagination__item--next" href="/chapters/08-scenarios/index.html">
+            <span class="pagination__label">下一章 →</span>
+            <span class="pagination__title">第八章：业务场景最佳实践</span>
+          </a>
+        </nav>
+      </div>
+
+      <nav class="toc-sidebar" aria-label="页内目录">
+        <div class="toc-sidebar__title">本章目录</div>
+        <div class="toc-list">
+          <a class="toc-item" href="#s1">7.1 Agent 工具详解</a>
+          <a class="toc-item toc-item--h3" href="#s1">参数说明</a>
+          <a class="toc-item" href="#s2">7.2 Sub-agent 拆分策略</a>
+          <a class="toc-item toc-item--h3" href="#s2">何时拆分</a>
+          <a class="toc-item toc-item--h3" href="#s2">划分原则</a>
+          <a class="toc-item" href="#s3">7.3 并行 Agent</a>
+          <a class="toc-item" href="#s4">7.4 Headless 模式</a>
+          <a class="toc-item toc-item--h3" href="#s4">GitHub Actions 集成</a>
+          <a class="toc-item" href="#s5">7.5 自动化工作流案例</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="/assets/js/nav.js"></script>
+  <script src="/assets/js/search.js"></script>
+  <script>
+    function copyCode(btn) {
+      const code = btn.closest('.code-block').querySelector('code');
+      navigator.clipboard.writeText(code.innerText).then(() => {
+        btn.textContent = '已复制！'; btn.classList.add('is-copied');
+        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('is-copied'); }, 2000);
+      });
+    }
+    (function () {
+      const ids = ['s1','s2','s3','s4','s5'];
+      const tocLinks = document.querySelectorAll('.toc-item');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('is-active'));
+            const a = document.querySelector(`.toc-item[href="#${e.target.id}"]`);
+            if (a) a.classList.add('is-active');
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      ids.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+    })();
+  </script>
+</body>
+</html>
