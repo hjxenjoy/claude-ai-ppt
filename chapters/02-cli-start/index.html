@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>第二章：Claude Code CLI 入门 — Claude AI 从入门到精通</title>
+  <meta name="description" content="Claude Code CLI 安装配置、三种使用模式、权限模式、快捷键速查与第一个实战任务。" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+
+  <header class="top-bar">
+    <button class="sidebar-toggle" aria-label="打开菜单" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <line x1="2" y1="4.5" x2="16" y2="4.5"/>
+        <line x1="2" y1="9"   x2="16" y2="9"/>
+        <line x1="2" y1="13.5" x2="16" y2="13.5"/>
+      </svg>
+    </button>
+    <a class="top-bar__logo" href="/index.html">
+      <div class="top-bar__logo-icon">C</div>
+      <span class="top-bar__logo-text">Claude 教程</span>
+    </a>
+    <div class="top-bar__search">
+      <span class="top-bar__search-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="5.5" cy="5.5" r="4"/><line x1="9" y1="9" x2="13" y2="13"/>
+        </svg>
+      </span>
+      <input class="top-bar__search-input" type="search" placeholder="搜索文档… ( / )" aria-label="搜索文档" autocomplete="off" spellcheck="false" />
+    </div>
+    <nav class="top-bar__actions">
+      <a class="top-bar__action-btn" href="https://github.com/anthropics/claude-code" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.88 10.95.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.42.36.79 1.07.79 2.15v3.19c0 .31.21.67.8.56C20.21 21.41 23.5 17.09 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </header>
+
+  <aside class="sidebar" aria-label="章节导航"></aside>
+  <div class="sidebar-overlay" aria-hidden="true"></div>
+
+  <div class="page-wrapper">
+    <div class="main-layout">
+      <div class="content-wrapper">
+        <article class="content">
+
+          <div class="content-meta">
+            <a href="/index.html">首页</a>
+            <span class="content-meta__separator">/</span>
+            <span>第二章</span>
+          </div>
+
+          <h1 id="top">第二章：Claude Code CLI 入门</h1>
+
+          <p>Claude Code 是 Anthropic 官方推出的命令行 AI 编程助手，直接在终端中运行，能够读写文件、执行命令、理解整个代码库。本章介绍从零安装到完成第一个任务的完整流程。</p>
+
+          <!-- ── 2.1 ─────────────────────────────────────────── -->
+          <h2 id="s1">2.1 安装与配置</h2>
+
+          <h3>前置要求</h3>
+          <ul>
+            <li>Node.js 18 或更高版本</li>
+            <li>npm 或 yarn 包管理器</li>
+            <li>Anthropic API Key（或通过 Claude.ai 订阅授权）</li>
+          </ul>
+
+          <h3>安装</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash">npm install -g @anthropic-ai/claude-code</code></pre>
+          </div>
+
+          <h3>配置 API Key</h3>
+          <p>有两种方式提供认证：</p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash"># 方式一：环境变量（推荐）
+export ANTHROPIC_API_KEY="sk-ant-..."
+
+# 写入 shell 配置文件永久生效
+echo 'export ANTHROPIC_API_KEY="sk-ant-..."' >> ~/.zshrc
+
+# 方式二：首次运行时交互式登录（适合个人订阅用户）
+claude</code></pre>
+          </div>
+
+          <div class="callout callout--warning">
+            <div class="callout__icon">⚠️</div>
+            <div class="callout__body">
+              <div class="callout__title">安全提示</div>
+              <p>不要将 API Key 硬编码到代码中或提交到 Git 仓库。建议使用 <code>.env</code> 文件并将其加入 <code>.gitignore</code>。</p>
+            </div>
+          </div>
+
+          <h3>验证安装</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash">claude --version
+# claude 1.x.x
+
+claude --help</code></pre>
+          </div>
+
+          <!-- ── 2.2 ─────────────────────────────────────────── -->
+          <h2 id="s2">2.2 三种使用模式</h2>
+
+          <h3>模式一：交互式 REPL</h3>
+          <p>最常用的模式。直接在终端开启会话，支持多轮对话，Claude 可访问当前目录的所有文件。</p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash"># 在项目目录下启动
+cd my-project
+claude
+
+# 进入交互界面后直接输入任务
+> 帮我分析 src/api/auth.ts 中的安全问题</code></pre>
+          </div>
+
+          <h3>模式二：单次 <code>-p</code> 命令</h3>
+          <p>适合脚本自动化、一次性任务。通过 <code>-p</code>（print）参数传入 prompt，执行完毕后退出。</p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash"># 执行单次任务
+claude -p "列出 src 目录下所有超过 200 行的文件"
+
+# 输出为 JSON 格式（便于脚本解析）
+claude -p "统计项目中各语言的文件数量" --output-format json
+
+# 指定工作目录
+claude -p "生成项目的 README" --cwd /path/to/project</code></pre>
+          </div>
+
+          <h3>模式三：管道输入</h3>
+          <p>通过标准输入传递内容，适合处理文件内容或命令输出。</p>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">bash</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-bash"># 分析文件内容
+cat error.log | claude -p "分析这些错误日志，找出根本原因"
+
+# 代码审查
+git diff HEAD~1 | claude -p "审查这次提交的代码变更"
+
+# 组合使用
+cat package.json | claude -p "基于这个 package.json 生成项目的技术栈说明文档"</code></pre>
+          </div>
+
+          <table>
+            <thead>
+              <tr><th>模式</th><th>适用场景</th><th>是否保持上下文</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>交互式 REPL</td><td>日常开发、多轮对话</td><td>✅ 是</td></tr>
+              <tr><td>单次 -p 命令</td><td>脚本自动化、CI/CD</td><td>❌ 否</td></tr>
+              <tr><td>管道输入</td><td>处理文件/命令输出</td><td>❌ 否</td></tr>
+            </tbody>
+          </table>
+
+          <!-- ── 2.3 ─────────────────────────────────────────── -->
+          <h2 id="s3">2.3 权限模式</h2>
+
+          <p>Claude Code 在执行写文件、运行命令等操作时会请求用户确认。可通过权限模式控制确认频率：</p>
+
+          <table>
+            <thead>
+              <tr><th>模式</th><th>启动方式</th><th>行为</th><th>适用场景</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>default</strong></td>
+                <td><code>claude</code></td>
+                <td>每次危险操作前询问确认</td>
+                <td>日常使用（推荐）</td>
+              </tr>
+              <tr>
+                <td><strong>auto-approve</strong></td>
+                <td><code>claude --dangerously-skip-permissions</code></td>
+                <td>自动批准所有操作，不询问</td>
+                <td>受信任的自动化脚本</td>
+              </tr>
+              <tr>
+                <td><strong>manual</strong></td>
+                <td>settings.json 配置</td>
+                <td>精细控制每类工具的权限</td>
+                <td>生产环境、敏感项目</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>通过 settings.json 精细配置权限</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">json</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code class="language-json">{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Write(src/**)",
+      "Bash(npm run *)",
+      "Bash(git status)",
+      "Bash(git diff *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push *)"
+    ]
+  }
+}</code></pre>
+          </div>
+
+          <div class="callout callout--tip">
+            <div class="callout__icon">💡</div>
+            <div class="callout__body">
+              <div class="callout__title">权限配置建议</div>
+              <p>在项目 <code>.claude/settings.json</code> 中配置仅限该项目的权限，在 <code>~/.claude/settings.json</code> 中配置全局默认权限。项目级配置优先级更高，可覆盖全局配置。</p>
+            </div>
+          </div>
+
+          <!-- ── 2.4 ─────────────────────────────────────────── -->
+          <h2 id="s4">2.4 快捷键速查</h2>
+
+          <p>在交互式 REPL 模式下，以下快捷键可显著提升操作效率：</p>
+
+          <table>
+            <thead>
+              <tr><th>快捷键</th><th>功能</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><kbd>Enter</kbd></td><td>发送当前消息</td></tr>
+              <tr><td><kbd>Shift</kbd> + <kbd>Enter</kbd></td><td>消息内换行（多行输入）</td></tr>
+              <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>浏览历史消息</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>C</kbd></td><td>中断当前生成 / 取消操作</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>C</kbd> × 2</td><td>退出 Claude Code</td></tr>
+              <tr><td><kbd>Esc</kbd></td><td>软中断（保留上下文，取消当前步骤）</td></tr>
+              <tr><td><kbd>Esc</kbd> × 2</td><td>编辑上一条消息</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>R</kbd></td><td>搜索历史命令</td></tr>
+              <tr><td><kbd>Ctrl</kbd> + <kbd>L</kbd></td><td>清屏（不清除上下文）</td></tr>
+              <tr><td><kbd>Tab</kbd></td><td>自动补全文件路径</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout callout--info">
+            <div class="callout__icon">ℹ️</div>
+            <div class="callout__body">
+              <div class="callout__title">Ctrl+C 与 Esc 的区别</div>
+              <p><kbd>Ctrl+C</kbd> 会立即终止正在执行的工具调用（如正在运行的 Bash 命令）；<kbd>Esc</kbd> 是"软中断"，Claude 会完成当前工具调用后停止继续，适合在不想丢失已完成工作的情况下叫停。</p>
+            </div>
+          </div>
+
+          <!-- ── 2.5 ─────────────────────────────────────────── -->
+          <h2 id="s5">2.5 第一个任务：Hello World</h2>
+
+          <p>通过一个完整的上手实验，体验 Claude Code 的核心工作流：</p>
+
+          <div class="steps">
+            <div class="step">
+              <div class="step__number"></div>
+              <div class="step__content">
+                <div class="step__title">创建项目目录并启动</div>
+                <div class="step__body">
+                  <div class="code-block">
+                    <div class="code-block__header">
+                      <span class="code-block__lang">bash</span>
+                      <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code class="language-bash">mkdir hello-claude && cd hello-claude
+claude</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__number"></div>
+              <div class="step__content">
+                <div class="step__title">初始化 Node.js 项目</div>
+                <div class="step__body">
+                  <p>在交互界面中输入：</p>
+                  <div class="code-block">
+                    <div class="code-block__header">
+                      <span class="code-block__lang">text</span>
+                      <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>初始化一个 Node.js 项目，创建 package.json，然后创建 index.js，
+内容是用 HTTP 模块启动一个服务器，监听 3000 端口，
+访问根路径时返回 "Hello from Claude Code!"</code></pre>
+                  </div>
+                  <p>Claude 会依次执行：<code>npm init -y</code>、创建 <code>index.js</code>，并展示代码内容供你确认。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__number"></div>
+              <div class="step__content">
+                <div class="step__title">运行并验证</div>
+                <div class="step__body">
+                  <div class="code-block">
+                    <div class="code-block__header">
+                      <span class="code-block__lang">text</span>
+                      <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>运行这个服务器，然后用 curl 测试一下根路径</code></pre>
+                  </div>
+                  <p>Claude 会执行 <code>node index.js &amp;</code>，再运行 <code>curl http://localhost:3000</code>，你将看到响应结果。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step__number"></div>
+              <div class="step__content">
+                <div class="step__title">扩展功能</div>
+                <div class="step__body">
+                  <div class="code-block">
+                    <div class="code-block__header">
+                      <span class="code-block__lang">text</span>
+                      <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>给这个服务器添加一个 /time 路由，返回当前时间的 JSON 格式，
+格式为 { "time": "2026-04-10T12:00:00Z", "timestamp": 1234567890 }</code></pre>
+                  </div>
+                  <p>体验 Claude Code 直接修改文件并重启服务器的完整工作流。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout callout--success">
+            <div class="callout__icon">✅</div>
+            <div class="callout__body">
+              <div class="callout__title">你学到了什么</div>
+              <p>完成以上实验后，你已经掌握了 Claude Code 的核心工作流：<strong>用自然语言描述任务 → Claude 生成并执行代码 → 验证结果 → 迭代完善</strong>。接下来可以把这个流程应用到真实项目中。</p>
+            </div>
+          </div>
+
+        </article>
+
+        <nav class="pagination">
+          <a class="pagination__item" href="/chapters/01-intro/index.html">
+            <span class="pagination__label">← 上一章</span>
+            <span class="pagination__title">第一章：认识 Claude</span>
+          </a>
+          <a class="pagination__item pagination__item--next" href="/chapters/03-cli-core/index.html">
+            <span class="pagination__label">下一章 →</span>
+            <span class="pagination__title">第三章：CLI 核心功能</span>
+          </a>
+        </nav>
+      </div>
+
+      <nav class="toc-sidebar" aria-label="页内目录">
+        <div class="toc-sidebar__title">本章目录</div>
+        <div class="toc-list">
+          <a class="toc-item" href="#s1">2.1 安装与配置</a>
+          <a class="toc-item toc-item--h3" href="#s1">前置要求</a>
+          <a class="toc-item toc-item--h3" href="#s1">配置 API Key</a>
+          <a class="toc-item" href="#s2">2.2 三种使用模式</a>
+          <a class="toc-item toc-item--h3" href="#s2">交互式 REPL</a>
+          <a class="toc-item toc-item--h3" href="#s2">单次 -p 命令</a>
+          <a class="toc-item toc-item--h3" href="#s2">管道输入</a>
+          <a class="toc-item" href="#s3">2.3 权限模式</a>
+          <a class="toc-item" href="#s4">2.4 快捷键速查</a>
+          <a class="toc-item" href="#s5">2.5 第一个任务</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="/assets/js/nav.js"></script>
+  <script src="/assets/js/search.js"></script>
+  <script>
+    function copyCode(btn) {
+      const code = btn.closest('.code-block').querySelector('code');
+      navigator.clipboard.writeText(code.innerText).then(() => {
+        btn.textContent = '已复制！';
+        btn.classList.add('is-copied');
+        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('is-copied'); }, 2000);
+      });
+    }
+    (function () {
+      const ids = ['s1','s2','s3','s4','s5'];
+      const tocLinks = document.querySelectorAll('.toc-item');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('is-active'));
+            const active = document.querySelector(`.toc-item[href="#${entry.target.id}"]`);
+            if (active) active.classList.add('is-active');
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      ids.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+    })();
+  </script>
+</body>
+</html>
