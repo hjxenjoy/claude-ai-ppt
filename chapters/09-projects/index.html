@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>第九章：实战项目案例 — Claude AI 从入门到精通</title>
+  <meta name="description" content="六个完整手把手项目案例：门户网站、管理后台、小游戏、移动端 APP、Chrome 扩展与 CLI 工具。" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="/assets/js/theme.js"></script>
+
+  <style>
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--spacing-lg);
+      margin: var(--spacing-xl) 0;
+    }
+
+    .project-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      text-decoration: none;
+      transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+    }
+
+    .project-card:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      color: inherit;
+    }
+
+    .project-card__icon {
+      font-size: 2rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .project-card__title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .project-card__stack {
+      font-size: 0.75rem;
+      color: var(--color-primary-light);
+      margin-bottom: var(--spacing-sm);
+      font-family: var(--font-code);
+    }
+
+    .project-card__desc {
+      font-size: 0.8125rem;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .project-card__meta {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-md);
+      padding-top: var(--spacing-sm);
+      border-top: 1px solid var(--color-border);
+    }
+
+    /* 案例详情 */
+    .case-study {
+      margin: var(--spacing-2xl) 0;
+      padding: var(--spacing-xl);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      border-left: 3px solid var(--color-primary);
+    }
+
+    .case-study__header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .case-study__icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .case-study__meta {
+      flex: 1;
+    }
+
+    .case-study__title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: var(--spacing-xs);
+    }
+
+    .case-study__stack {
+      font-size: 0.8125rem;
+      color: var(--color-primary-light);
+      font-family: var(--font-code);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-bar">
+    <button class="sidebar-toggle" aria-label="打开菜单" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <line x1="2" y1="4.5" x2="16" y2="4.5"/>
+        <line x1="2" y1="9"   x2="16" y2="9"/>
+        <line x1="2" y1="13.5" x2="16" y2="13.5"/>
+      </svg>
+    </button>
+    <a class="top-bar__logo" href="/index.html">
+      <div class="top-bar__logo-icon">C</div>
+      <span class="top-bar__logo-text">Claude 教程</span>
+    </a>
+    <div class="top-bar__search">
+      <span class="top-bar__search-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="5.5" cy="5.5" r="4"/><line x1="9" y1="9" x2="13" y2="13"/>
+        </svg>
+      </span>
+      <input class="top-bar__search-input" type="search" placeholder="搜索文档… ( / )" aria-label="搜索文档" autocomplete="off" spellcheck="false" />
+    </div>
+    <nav class="top-bar__actions">
+      <a class="top-bar__action-btn" href="https://github.com/anthropics/claude-code" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.88 10.95.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.42.36.79 1.07.79 2.15v3.19c0 .31.21.67.8.56C20.21 21.41 23.5 17.09 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </header>
+
+  <aside class="sidebar" aria-label="章节导航"></aside>
+  <div class="sidebar-overlay" aria-hidden="true"></div>
+
+  <div class="page-wrapper">
+    <div class="main-layout">
+      <div class="content-wrapper">
+        <article class="content">
+
+          <div class="content-meta">
+            <a href="/index.html">首页</a>
+            <span class="content-meta__separator">/</span>
+            <span>第九章</span>
+          </div>
+
+          <h1 id="top">第九章：实战项目案例</h1>
+
+          <p>本章通过 6 个完整项目，演示如何用 Claude Code 从零构建真实应用。每个案例包含：背景说明、技术选型理由、逐步操作（含完整 Prompt）、结果验证和常见问题。</p>
+
+          <div class="callout callout--info">
+            <div class="callout__icon">ℹ️</div>
+            <div class="callout__body">
+              <div class="callout__title">前置阅读建议</div>
+              <p>本章案例综合运用前八章的知识。建议至少完成前四章（认识 Claude、CLI 入门、核心功能、.claude 目录）后再阅读，遇到不熟悉的概念可以回到对应章节查阅。</p>
+            </div>
+          </div>
+
+          <!-- 案例总览卡片 -->
+          <div class="project-grid">
+            <a class="project-card" href="#portal">
+              <div class="project-card__icon">🌐</div>
+              <div class="project-card__title">从零构建门户网站</div>
+              <div class="project-card__stack">HTML / CSS / JS</div>
+              <div class="project-card__desc">从空目录开始，构建含多页、响应式、SEO 友好的企业门户网站。</div>
+              <div class="project-card__meta">
+                <span class="badge badge--neutral">长篇</span>
+                <span class="badge badge--primary">推荐入门</span>
+              </div>
+            </a>
+
+            <a class="project-card" href="#admin">
+              <div class="project-card__icon">🖥️</div>
+              <div class="project-card__title">构建管理后台系统</div>
+              <div class="project-card__stack">React 18 / Ant Design / Vite</div>
+              <div class="project-card__desc">用户管理、权限控制、数据报表的完整 B 端后台系统。</div>
+              <div class="project-card__meta">
+                <span class="badge badge--neutral">长篇</span>
+              </div>
+            </a>
+
+            <a class="project-card" href="#game">
+              <div class="project-card__icon">🎮</div>
+              <div class="project-card__title">开发一个小游戏</div>
+              <div class="project-card__stack">Canvas / Vanilla JS</div>
+              <div class="project-card__desc">用 Canvas 实现贪吃蛇游戏，包含音效、排行榜和移动端适配。</div>
+              <div class="project-card__meta">
+                <span class="badge badge--neutral">中篇</span>
+              </div>
+            </a>
+
+            <a class="project-card" href="#app">
+              <div class="project-card__icon">📱</div>
+              <div class="project-card__title">开发移动端 APP</div>
+              <div class="project-card__stack">React Native / Expo</div>
+              <div class="project-card__desc">跨平台 Todo App，支持离线存储、推送通知和 iOS/Android 发布。</div>
+              <div class="project-card__meta">
+                <span class="badge badge--neutral">长篇</span>
+              </div>
+            </a>
+
+            <a class="project-card" href="#extension">
+              <div class="project-card__icon">🧩</div>
+              <div class="project-card__title">构建 Chrome 扩展</div>
+              <div class="project-card__stack">Manifest V3 / TypeScript</div>
+              <div class="project-card__desc">网页划词翻译扩展，集成 Claude API，支持右键菜单和快捷键。</div>
+              <div class="project-card__meta">
+                <span class="badge badge--neutral">中篇</span>
+              </div>
+            </a>
+
+            <a class="project-card" href="#cli-tool">
+              <div class="project-card__icon">⚙️</div>
+              <div class="project-card__title">开发 CLI 工具</div>
+              <div class="project-card__stack">Node.js / Commander.js</div>
+              <div class="project-card__desc">AI 驱动的代码审查 CLI 工具，可集成到 git hooks 和 CI/CD。</div>
+              <div class="project-card__meta">
+                <span class="badge badge--neutral">中篇</span>
+              </div>
+            </a>
+          </div>
+
+          <!-- ── 案例一：门户网站 ─────────────────────────────── -->
+          <div class="case-study" id="portal">
+            <div class="case-study__header">
+              <div class="case-study__icon">🌐</div>
+              <div class="case-study__meta">
+                <div class="case-study__title">案例一：从零构建门户网站</div>
+                <div class="case-study__stack">HTML5 · CSS3 · Vanilla JS · 无框架依赖</div>
+              </div>
+            </div>
+
+            <h3>背景</h3>
+            <p>为一家设计工作室构建官网，要求：多页面、移动端响应式、快速加载（无框架）、SEO 友好。</p>
+
+            <h3>逐步操作</h3>
+
+            <div class="steps">
+              <div class="step">
+                <div class="step__number"></div>
+                <div class="step__content">
+                  <div class="step__title">初始化项目结构</div>
+                  <div class="step__body">
+                    <div class="code-block">
+                      <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+                      <pre><code>为一个设计工作室创建静态网站的目录结构。
+
+页面：首页(index.html)、作品集(portfolio.html)、关于我们(about.html)、联系(contact.html)
+
+要求：
+- 创建 assets/css/、assets/js/、assets/img/ 目录
+- 创建共享的 base.css（CSS 变量、Reset）和 layout.css
+- 创建公共导航和页脚的 HTML 片段（header.html、footer.html）
+- 设计风格：极简主义，主色 #1a1a1a，强调色 #FF6B35（橙色）</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step__number"></div>
+                <div class="step__content">
+                  <div class="step__title">构建首页</div>
+                  <div class="step__body">
+                    <div class="code-block">
+                      <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+                      <pre><code>基于刚创建的目录结构，构建首页 index.html。
+
+首页模块（从上到下）：
+1. 固定导航栏（Logo + 导航链接 + CTA 按钮）
+2. Hero 区（全屏高度，大标题动画、副标题、"查看作品"按钮）
+3. 服务特性（3列卡片：品牌设计、UI/UX、网页开发）
+4. 精选作品（4个项目缩略图网格，悬停显示详情）
+5. 客户评价（轮播，3条评价）
+6. 联系 CTA（邮件收集 + 提交按钮）
+7. 页脚
+
+所有动画用纯 CSS，不引入任何 JS 库。</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step">
+                <div class="step__number"></div>
+                <div class="step__content">
+                  <div class="step__title">添加响应式和 SEO</div>
+                  <div class="step__body">
+                    <div class="code-block">
+                      <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+                      <pre><code>对所有页面进行响应式优化和 SEO 完善：
+
+响应式断点：
+- 桌面：≥1024px（当前布局）
+- 平板：768px-1023px（导航折叠，2列变1列）
+- 手机：<768px（汉堡菜单，单列，字号调整）
+
+SEO 要求（每个页面）：
+- 完整的 meta title/description/og 标签
+- 结构化数据（Organization schema）
+- 语义化 HTML 标签（header/main/section/article/footer）
+- 图片 alt 属性
+- 生成 sitemap.xml</code></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h3>常见问题</h3>
+            <ul>
+              <li><strong>Q：Claude 生成的布局在手机上错位？</strong><br>A：告诉 Claude 具体哪个元素有问题，并说明期望的显示效果，让它针对性修复。</li>
+              <li><strong>Q：CSS 动画导致页面卡顿？</strong><br>A：要求 Claude 改用 <code>transform</code> 和 <code>opacity</code> 属性实现动画（GPU 加速），避免修改 <code>width/height/margin</code>。</li>
+            </ul>
+          </div>
+
+          <!-- ── 案例二：管理后台 ─────────────────────────────── -->
+          <div class="case-study" id="admin">
+            <div class="case-study__header">
+              <div class="case-study__icon">🖥️</div>
+              <div class="case-study__meta">
+                <div class="case-study__title">案例二：构建管理后台系统</div>
+                <div class="case-study__stack">React 18 · TypeScript · Ant Design · Vite · React Query</div>
+              </div>
+            </div>
+
+            <h3>背景</h3>
+            <p>为 SaaS 产品构建运营管理后台，包含用户管理、权限控制、数据看板。团队熟悉 React 生态。</p>
+
+            <h3>关键 Prompt 节点</h3>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 第一步：项目初始化与架构设计
+用 Vite 创建 React 18 + TypeScript 项目，安装并配置：
+- Ant Design 5.x（中文语言包）
+- React Router v6（含权限路由守卫）
+- React Query（数据请求状态管理）
+- axios（配置拦截器：请求加 token，响应统一处理 401/403）
+
+创建标准的项目目录结构：
+src/
+  pages/          # 页面组件
+  components/     # 通用组件
+  hooks/          # 自定义 Hook
+  services/       # API 请求函数
+  stores/         # 全局状态（Zustand）
+  types/          # TypeScript 类型定义
+  utils/          # 工具函数</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 第二步：用户管理页面
+创建用户管理页面 src/pages/users/index.tsx。
+
+功能：
+- 用户列表（Ant Design Table，支持分页、排序、筛选）
+- 搜索框（按姓名/邮箱模糊搜索，300ms 防抖）
+- 状态筛选（全部/启用/禁用）
+- 操作列（编辑、禁用/启用、删除，带确认弹窗）
+- 新建/编辑用户弹窗（表单校验）
+
+API 接口（Mock）：
+- GET /api/users?page=1&size=20&keyword=&status=
+- POST /api/users
+- PUT /api/users/:id
+- DELETE /api/users/:id</code></pre>
+            </div>
+
+            <h3>常见问题</h3>
+            <ul>
+              <li><strong>Q：Ant Design 样式与自定义样式冲突？</strong><br>A：让 Claude 使用 Ant Design 的 Token 系统（<code>theme.token</code>）修改全局样式，避免直接覆盖 CSS 类名。</li>
+            </ul>
+          </div>
+
+          <!-- ── 案例三：小游戏 ───────────────────────────────── -->
+          <div class="case-study" id="game">
+            <div class="case-study__header">
+              <div class="case-study__icon">🎮</div>
+              <div class="case-study__meta">
+                <div class="case-study__title">案例三：开发贪吃蛇小游戏</div>
+                <div class="case-study__stack">Canvas API · Vanilla JS · Web Audio API</div>
+              </div>
+            </div>
+
+            <h3>完整开发 Prompt 序列</h3>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 第一步：核心游戏逻辑
+用原生 JavaScript 和 Canvas 实现贪吃蛇游戏核心：
+
+技术要求：
+- 使用 ES6 Class 组织代码（Snake 类、Food 类、Game 类）
+- 游戏循环用 requestAnimationFrame
+- 网格大小 20px，画布 400x400
+- 方向键控制，禁止 180° 反向移动
+- 吃到食物：蛇增长 + 得分 +10
+- 碰墙或碰自身：游戏结束
+
+输出单个 index.html 文件（内联 CSS 和 JS）。</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 第二步：增加音效和视觉效果
+在现有游戏基础上增加：
+1. 用 Web Audio API 生成音效（不需要音频文件）：
+   - 吃食物：短促的高频"叮"
+   - 游戏结束：下降音调
+2. 蛇头和蛇身颜色渐变（头部主色，尾部渐淡）
+3. 食物随机形状（圆形/方形/三角形轮换）
+4. 得分浮动动画（+10 字样从食物位置飘上去消失）</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 第三步：移动端适配
+添加移动端支持：
+1. 触摸滑动控制（swipe up/down/left/right）
+2. 屏幕宽度小于 480px 时，Canvas 等比缩放适应屏幕
+3. 添加屏幕上的方向按钮（虚拟方向键，半透明覆盖在画布下方）</code></pre>
+            </div>
+          </div>
+
+          <!-- ── 案例四：移动端 APP ───────────────────────────── -->
+          <div class="case-study" id="app">
+            <div class="case-study__header">
+              <div class="case-study__icon">📱</div>
+              <div class="case-study__meta">
+                <div class="case-study__title">案例四：开发移动端 APP（Todo）</div>
+                <div class="case-study__stack">React Native · Expo · AsyncStorage · Expo Notifications</div>
+              </div>
+            </div>
+
+            <h3>关键 Prompt 节点</h3>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 初始化 Expo 项目
+用 Expo（SDK 50+）初始化 React Native 项目，配置：
+- TypeScript
+- Expo Router（文件系统路由）
+- NativeWind（Tailwind CSS for RN）
+- AsyncStorage（本地持久化）
+
+创建基础 Todo 功能：
+- 首页：任务列表 + 底部输入框
+- 任务项：勾选完成、左滑删除、点击编辑
+- 分类：全部/待完成/已完成 Tab 切换
+- 数据持久化到 AsyncStorage</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 添加提醒功能
+为 Todo APP 添加任务提醒：
+1. 创建任务时可选设置提醒时间（DateTimePicker）
+2. 使用 expo-notifications 在设定时间发送本地推送通知
+3. 通知内容：任务标题 + "该完成了！"
+4. 处理 iOS/Android 权限请求差异
+5. App 在后台时通知仍正常触发</code></pre>
+            </div>
+          </div>
+
+          <!-- ── 案例五：Chrome 扩展 ──────────────────────────── -->
+          <div class="case-study" id="extension">
+            <div class="case-study__header">
+              <div class="case-study__icon">🧩</div>
+              <div class="case-study__meta">
+                <div class="case-study__title">案例五：构建 Chrome 扩展（划词翻译）</div>
+                <div class="case-study__stack">Manifest V3 · TypeScript · Claude API · Chrome Extension APIs</div>
+              </div>
+            </div>
+
+            <h3>关键 Prompt 节点</h3>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 搭建 Manifest V3 扩展框架
+创建 Chrome 扩展，实现划词翻译功能。
+
+文件结构：
+- manifest.json（Manifest V3，权限：activeTab、storage、contextMenus）
+- background.js（Service Worker：处理右键菜单、消息转发）
+- content.js（注入网页：监听文字选择、显示翻译气泡）
+- popup.html/js（扩展图标点击弹窗：设置 API Key）
+- options.html/js（选项页：目标语言、翻译风格设置）
+
+功能要求：
+- 选中文字后显示翻译图标，点击图标调用 Claude API 翻译
+- 翻译结果在气泡中显示，支持复制
+- API Key 存储在 chrome.storage.local（不明文显示）</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 实现 Claude API 调用
+在 background.js 中实现 Claude 翻译：
+
+调用参数：
+- model: claude-haiku-4-5（响应快、成本低，适合翻译）
+- max_tokens: 200
+- system: "你是专业翻译助手。将用户提供的文本翻译为{目标语言}。
+  只输出翻译结果，不要解释，不要加引号。"
+- messages: [{ role: "user", content: 选中的文字 }]
+
+错误处理：
+- API Key 未设置：提示用户去选项页配置
+- 网络错误：显示重试按钮
+- 超时（5s）：显示"翻译超时，请重试"</code></pre>
+            </div>
+          </div>
+
+          <!-- ── 案例六：CLI 工具 ─────────────────────────────── -->
+          <div class="case-study" id="cli-tool">
+            <div class="case-study__header">
+              <div class="case-study__icon">⚙️</div>
+              <div class="case-study__meta">
+                <div class="case-study__title">案例六：开发 AI 代码审查 CLI 工具</div>
+                <div class="case-study__stack">Node.js · Commander.js · Anthropic SDK · npm publish</div>
+              </div>
+            </div>
+
+            <h3>关键 Prompt 节点</h3>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 初始化 CLI 项目
+创建一个名为 ai-review 的 Node.js CLI 工具项目。
+
+功能：
+- ai-review                    # 审查当前 git staged 变更
+- ai-review --file src/api.ts  # 审查指定文件
+- ai-review --pr 123           # 审查 GitHub PR（需 GH_TOKEN）
+- ai-review --fix              # 审查并自动修复低风险问题
+
+技术选型：
+- commander.js（命令解析）
+- @anthropic-ai/sdk（AI 调用）
+- chalk（彩色输出）
+- ora（加载动画）
+- cosmiconfig（配置文件支持 .aireviewrc）
+
+确保 package.json 配置 bin 字段，支持全局安装后直接使用 ai-review 命令。</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 配置文件支持
+为 ai-review 添加 .aireviewrc.json 配置文件支持：
+
+可配置项：
+{
+  "model": "claude-sonnet-4-6",
+  "language": "zh",               // 审查报告语言
+  "rules": ["security", "performance", "style"],  // 启用的规则集
+  "severity": "warning",          // 最低报告级别
+  "ignore": ["*.test.ts", "dist/"]  // 忽略的文件
+}
+
+实现规则集：
+- security：OWASP Top 10 相关问题
+- performance：N+1查询、无限循环、内存泄漏
+- style：命名规范、复杂度、重复代码</code></pre>
+            </div>
+
+            <div class="code-block">
+              <div class="code-block__header"><span class="code-block__lang">text</span><button class="code-block__copy" onclick="copyCode(this)">复制</button></div>
+              <pre><code># 发布到 npm
+准备发布 ai-review 到 npm：
+1. 完善 package.json（description、keywords、repository、license）
+2. 创建 README.md（安装、使用方法、配置说明）
+3. 添加 .npmignore 排除开发文件
+4. 配置 GitHub Actions：push tag 时自动 npm publish
+5. 添加版本管理命令（npm run release:patch/minor/major）</code></pre>
+            </div>
+          </div>
+
+        </article>
+
+        <nav class="pagination">
+          <a class="pagination__item" href="/chapters/08-scenarios/index.html">
+            <span class="pagination__label">← 上一章</span>
+            <span class="pagination__title">第八章：业务场景最佳实践</span>
+          </a>
+          <a class="pagination__item pagination__item--next" href="/chapters/10-faq/index.html">
+            <span class="pagination__label">下一章 →</span>
+            <span class="pagination__title">第十章：常见问题与避坑</span>
+          </a>
+        </nav>
+      </div>
+
+      <nav class="toc-sidebar" aria-label="页内目录">
+        <div class="toc-sidebar__title">本章目录</div>
+        <div class="toc-list">
+          <a class="toc-item" href="#portal">案例一：门户网站</a>
+          <a class="toc-item" href="#admin">案例二：管理后台</a>
+          <a class="toc-item" href="#game">案例三：小游戏</a>
+          <a class="toc-item" href="#app">案例四：移动端 APP</a>
+          <a class="toc-item" href="#extension">案例五：Chrome 扩展</a>
+          <a class="toc-item" href="#cli-tool">案例六：CLI 工具</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="/assets/js/nav.js"></script>
+  <script src="/assets/js/search.js"></script>
+  <script>
+    function copyCode(btn) {
+      const code = btn.closest('.code-block').querySelector('code');
+      navigator.clipboard.writeText(code.innerText).then(() => {
+        btn.textContent = '已复制！'; btn.classList.add('is-copied');
+        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('is-copied'); }, 2000);
+      });
+    }
+    (function () {
+      const ids = ['portal','admin','game','app','extension','cli-tool'];
+      const tocLinks = document.querySelectorAll('.toc-item');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('is-active'));
+            const a = document.querySelector(`.toc-item[href="#${e.target.id}"]`);
+            if (a) a.classList.add('is-active');
+          }
+        });
+      }, { rootMargin: '-10% 0px -80% 0px' });
+      ids.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+    })();
+  </script>
+</body>
+</html>
