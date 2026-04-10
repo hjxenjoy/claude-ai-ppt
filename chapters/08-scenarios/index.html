@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>第八章：业务场景最佳实践 — Claude AI 从入门到精通</title>
+  <meta name="description" content="Claude 在功能开发、代码审查、重构、PRD 撰写、竞品分析、技术文档、数据分析与 DevOps 中的最佳实践。" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/base.css" />
+  <link rel="stylesheet" href="/assets/css/layout.css" />
+  <link rel="stylesheet" href="/assets/css/components.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="/assets/js/theme.js"></script>
+</head>
+<body>
+
+  <header class="top-bar">
+    <button class="sidebar-toggle" aria-label="打开菜单" aria-expanded="false">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <line x1="2" y1="4.5" x2="16" y2="4.5"/>
+        <line x1="2" y1="9"   x2="16" y2="9"/>
+        <line x1="2" y1="13.5" x2="16" y2="13.5"/>
+      </svg>
+    </button>
+    <a class="top-bar__logo" href="/index.html">
+      <div class="top-bar__logo-icon">C</div>
+      <span class="top-bar__logo-text">Claude 教程</span>
+    </a>
+    <div class="top-bar__search">
+      <span class="top-bar__search-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="5.5" cy="5.5" r="4"/><line x1="9" y1="9" x2="13" y2="13"/>
+        </svg>
+      </span>
+      <input class="top-bar__search-input" type="search" placeholder="搜索文档… ( / )" aria-label="搜索文档" autocomplete="off" spellcheck="false" />
+    </div>
+    <nav class="top-bar__actions">
+      <a class="top-bar__action-btn" href="https://github.com/anthropics/claude-code" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.42 7.88 10.95.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.79 1.2 1.79 1.2 1.04 1.78 2.73 1.27 3.4.97.1-.75.4-1.27.73-1.56-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.41-5.27 5.7.42.36.79 1.07.79 2.15v3.19c0 .31.21.67.8.56C20.21 21.41 23.5 17.09 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg>
+        GitHub
+      </a>
+    </nav>
+  </header>
+
+  <aside class="sidebar" aria-label="章节导航"></aside>
+  <div class="sidebar-overlay" aria-hidden="true"></div>
+
+  <div class="page-wrapper">
+    <div class="main-layout">
+      <div class="content-wrapper">
+        <article class="content">
+
+          <div class="content-meta">
+            <a href="/index.html">首页</a>
+            <span class="content-meta__separator">/</span>
+            <span>第八章</span>
+          </div>
+
+          <h1 id="top">第八章：业务场景最佳实践</h1>
+
+          <p>本章将 Claude 的能力落地到真实工作场景，提供经过验证的 Prompt 模板和工作流程。每个场景都包含完整的提示链，可直接复用。</p>
+
+          <!-- ── 8.1 ─────────────────────────────────────────── -->
+          <h2 id="s1">8.1 功能开发</h2>
+
+          <p>用 Claude Code 完成一个完整功能的标准流程：需求理解 → 方案设计 → 编码实现 → 测试验证。</p>
+
+          <h3>第一步：需求拆解</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>我需要为用户系统添加"第三方登录"功能，支持 GitHub OAuth。
+
+请帮我：
+1. 列出实现这个功能需要的所有技术步骤
+2. 识别哪些是前端工作、哪些是后端工作
+3. 指出可能遇到的技术难点
+4. 给出推荐的实现顺序
+
+项目技术栈：@package.json</code></pre>
+          </div>
+
+          <h3>第二步：方案确认后开始编码</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>按照刚才的方案，开始实现后端部分。
+
+先完成第一步：在 src/modules/auth/ 下创建 GitHub OAuth 回调处理器。
+要求：
+- 接收 code 参数，向 GitHub 换取 access_token
+- 用 access_token 获取用户基本信息（id、name、email、avatar）
+- 如果邮箱已存在，关联到现有账户；否则创建新账户
+- 返回 JWT token
+
+参考现有的登录实现：@src/modules/auth/login.service.ts</code></pre>
+          </div>
+
+          <h3>第三步：编写测试</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>为刚才实现的 GitHub OAuth 处理器编写单元测试。
+
+覆盖场景：
+1. 正常流程：新用户首次 GitHub 登录
+2. 已有账户关联：相同邮箱已存在
+3. GitHub API 调用失败
+4. 无效的 authorization code
+
+Mock 掉 GitHub API 调用，不发真实请求。
+测试文件放在 @src/modules/auth/__tests__/</code></pre>
+          </div>
+
+          <!-- ── 8.2 ─────────────────────────────────────────── -->
+          <h2 id="s2">8.2 代码审查</h2>
+
+          <h3>全面审查模板</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>对 @src/api/payment.ts 进行全面代码审查。
+
+审查维度（按优先级排序）：
+🔴 安全性：SQL 注入、XSS、CSRF、敏感数据暴露、权限绕过
+🔴 正确性：逻辑错误、边界条件、空指针、并发问题
+🟡 可靠性：错误处理、事务完整性、幂等性、重试逻辑
+🟡 性能：N+1 查询、无索引查询、内存泄漏、不必要的同步操作
+🟢 可维护性：代码重复、命名清晰度、复杂度、注释完整性
+
+输出格式：
+- 每个问题：[级别] 文件:行号 — 问题描述 → 建议修复方案
+- 末尾附上总体评分（1-10）和最重要的 3 条改进建议</code></pre>
+          </div>
+
+          <h3>安全专项审查</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>对 @src/api/ 目录进行安全审查，重点检查 OWASP Top 10 漏洞。
+
+逐一检查：
+- A01 权限控制缺失：是否所有接口都有鉴权中间件？
+- A02 加密失败：密码是否使用 bcrypt？敏感字段是否加密存储？
+- A03 注入攻击：是否使用参数化查询？用户输入是否经过校验？
+- A07 认证失败：JWT 验证是否完整？是否有暴力破解防护？
+
+对每个漏洞给出：发现位置 + 严重程度 + 修复代码片段</code></pre>
+          </div>
+
+          <!-- ── 8.3 ─────────────────────────────────────────── -->
+          <h2 id="s3">8.3 重构与技术债</h2>
+
+          <h3>渐进式重构策略</h3>
+          <div class="callout callout--tip">
+            <div class="callout__icon">💡</div>
+            <div class="callout__body">
+              <div class="callout__title">重构黄金原则</div>
+              <p>每次重构后立即运行测试，确保绿灯再继续。让 Claude 先生成测试再重构，防止行为变更被忽视。</p>
+            </div>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code># 第一步：分析现状
+分析 @src/services/order.service.ts 的代码质量问题。
+列出：
+- 违反单一职责原则的函数
+- 超过 50 行的方法
+- 重复代码片段
+- 硬编码的魔法值
+按重构优先级排序，不要修改任何代码。</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code># 第二步：先补测试
+在重构之前，为 createOrder 函数编写测试，覆盖所有当前行为。
+测试通过后才开始重构，确保行为不变。</code></pre>
+          </div>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code># 第三步：小步重构
+只重构 createOrder 中的库存校验逻辑，将其提取为独立的 validateInventory 方法。
+不要修改其他任何代码。完成后运行 npm test 验证。</code></pre>
+          </div>
+
+          <!-- ── 8.4 ─────────────────────────────────────────── -->
+          <h2 id="s4">8.4 PRD 撰写</h2>
+
+          <h3>需求挖掘提示链</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>我想做一个"团队任务管理"功能。在我描述之前，
+请先向我提问，帮我把需求想清楚。
+
+重点问清楚：
+- 核心用户是谁？他们最大的痛点是什么？
+- 成功的定义是什么？上线后怎么衡量是否成功？
+- 与现有竞品（Jira、Linear、飞书）的差异化是什么？
+- 有哪些明确不做的功能（Out of Scope）？
+
+每次只问 2-3 个问题，等我回答后再继续。</code></pre>
+          </div>
+
+          <h3>PRD 结构化模板</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>基于我们的对话，生成一份完整的 PRD 文档。
+
+必须包含以下章节：
+1. 背景与目标（为什么做，解决什么问题）
+2. 用户故事（As a [角色], I want [功能], so that [价值]）
+3. 功能列表（P0/P1/P2 优先级标注）
+4. 核心流程图（用 Mermaid 语法绘制）
+5. 非功能需求（性能、安全、兼容性）
+6. 验收标准（每个功能点的 AC）
+7. 里程碑计划（按 2 周 Sprint 拆分）
+8. 风险与依赖
+
+语言：专业但易读，避免空话套话。</code></pre>
+          </div>
+
+          <!-- ── 8.5 ─────────────────────────────────────────── -->
+          <h2 id="s5">8.5 竞品分析</h2>
+
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick into="复制">复制</button>
+            </div>
+            <pre><code>对以下 AI 代码助手产品进行竞品分析：
+GitHub Copilot、Cursor、Windsurf、Claude Code
+
+分析框架：
+1. 定位矩阵：用 2×2 矩阵分析（个人 vs 团队、代码补全 vs 对话式）
+2. 功能对比表：IDE 集成、上下文窗口、多文件编辑、Agent 能力、价格
+3. 用户口碑：各产品在开发者社区中的主要正负面评价
+4. 差异化洞察：Claude Code 的独特优势和明显短板
+
+最后：如果我是产品经理，应该重点强化哪 3 个方向来提升竞争力？</code></pre>
+          </div>
+
+          <!-- ── 8.6 ─────────────────────────────────────────── -->
+          <h2 id="s6">8.6 技术文档生成</h2>
+
+          <h3>从代码生成 API 文档</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>读取 @src/controllers/ 目录下所有 Controller 文件，
+生成 OpenAPI 3.0 格式的 API 文档（YAML 格式）。
+
+要求：
+- 提取每个接口的路径、方法、参数、请求体、响应结构
+- 从注释中提取接口描述，没有注释的根据代码逻辑推断
+- 标注需要认证的接口（带有 @UseGuards 装饰器的）
+- 为每个接口生成 1 个请求示例和对应的响应示例
+
+输出到 docs/openapi.yaml</code></pre>
+          </div>
+
+          <h3>生成 README</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>分析项目结构，为这个项目生成专业的 README.md。
+
+必须包含：
+- 项目简介（一句话 + 功能截图占位符）
+- 技术栈徽章（shields.io 格式）
+- 快速开始（3 步内跑起来）
+- 详细安装说明（环境要求、依赖安装、配置说明）
+- 目录结构说明
+- 开发指南（分支规范、提交规范、测试要求）
+- 部署说明
+- 贡献指南
+
+参考项目：@package.json @CLAUDE.md 以及顶层目录结构</code></pre>
+          </div>
+
+          <!-- ── 8.7 ─────────────────────────────────────────── -->
+          <h2 id="s7">8.7 数据分析</h2>
+
+          <h3>日志分析</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>分析以下 Nginx 访问日志，找出性能和安全问题：
+
+[粘贴日志内容，或 cat access.log | claude -p "..."]
+
+需要输出：
+1. 响应时间 P50/P95/P99 分位数
+2. 错误率最高的 10 个接口（4xx/5xx）
+3. 请求量 TOP 10 的 IP（识别可疑爬虫）
+4. 慢请求（>2s）的分布规律
+5. 高峰期时间段分析
+
+用 ASCII 图表展示时间分布趋势。</code></pre>
+          </div>
+
+          <h3>数据清洗脚本生成</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>我有一份用户数据 CSV 文件，格式如下：
+id, name, email, phone, register_date, last_login
+
+存在以下数据质量问题：
+- email 格式不规范（缺少 @、多余空格）
+- phone 格式混乱（有 +86、带括号、纯数字等多种格式）
+- register_date 有多种日期格式（YYYY/MM/DD、MM-DD-YYYY 等）
+- 存在完全重复行和部分字段重复的近似重复
+
+请用 Python（pandas）生成数据清洗脚本：
+1. 标准化所有字段格式
+2. 识别并处理重复数据
+3. 输出清洗报告（处理了多少行、修复了哪些问题）</code></pre>
+          </div>
+
+          <!-- ── 8.8 ─────────────────────────────────────────── -->
+          <h2 id="s8">8.8 DevOps 辅助</h2>
+
+          <h3>Dockerfile 生成与优化</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>为这个 Node.js 项目生成生产级 Dockerfile。
+
+要求：
+- 使用多阶段构建（build stage + runtime stage）
+- 以 node:20-alpine 为基础镜像
+- 最终镜像不包含 devDependencies 和源码（只有编译产物）
+- 以非 root 用户运行
+- 正确处理 node_modules 缓存层（利用 Docker layer cache）
+- 添加健康检查
+
+参考：@package.json（了解构建命令和入口文件）</code></pre>
+          </div>
+
+          <h3>故障排查</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>服务在 Kubernetes 中出现 OOMKilled（内存溢出）问题，以下是相关信息：
+
+Pod 状态：
+[粘贴 kubectl describe pod 输出]
+
+最近一小时日志：
+[粘贴 kubectl logs 输出]
+
+请帮我：
+1. 分析 OOM 的可能原因（内存泄漏 / 配置不足 / 突发流量）
+2. 给出排查步骤（需要运行哪些命令来确认原因）
+3. 根据分析结果提供 resources.limits.memory 调整建议
+4. 如果是代码问题，指出可能的泄漏点</code></pre>
+          </div>
+
+          <h3>CI 配置生成</h3>
+          <div class="code-block">
+            <div class="code-block__header">
+              <span class="code-block__lang">text</span>
+              <button class="code-block__copy" onclick="copyCode(this)">复制</button>
+            </div>
+            <pre><code>为这个项目生成 GitHub Actions CI/CD 配置，包含以下 workflow：
+
+1. PR 检查（pr-check.yml）：
+   - 代码 lint（eslint）
+   - 类型检查（tsc --noEmit）
+   - 单元测试（覆盖率报告上传到 Codecov）
+   - 构建验证
+
+2. 部署（deploy.yml）：
+   - 触发条件：main 分支 push
+   - 构建 Docker 镜像并推送到 GitHub Container Registry
+   - 通过 SSH 部署到生产服务器（rolling update）
+   - 部署失败时自动回滚
+
+参考：@package.json 中的 scripts 字段</code></pre>
+          </div>
+
+        </article>
+
+        <nav class="pagination">
+          <a class="pagination__item" href="/chapters/07-agent/index.html">
+            <span class="pagination__label">← 上一章</span>
+            <span class="pagination__title">第七章：Agent 与自动化</span>
+          </a>
+          <a class="pagination__item pagination__item--next" href="/chapters/09-projects/index.html">
+            <span class="pagination__label">下一章 →</span>
+            <span class="pagination__title">第九章：实战项目案例</span>
+          </a>
+        </nav>
+      </div>
+
+      <nav class="toc-sidebar" aria-label="页内目录">
+        <div class="toc-sidebar__title">本章目录</div>
+        <div class="toc-list">
+          <a class="toc-item" href="#s1">8.1 功能开发</a>
+          <a class="toc-item" href="#s2">8.2 代码审查</a>
+          <a class="toc-item toc-item--h3" href="#s2">安全专项审查</a>
+          <a class="toc-item" href="#s3">8.3 重构与技术债</a>
+          <a class="toc-item" href="#s4">8.4 PRD 撰写</a>
+          <a class="toc-item toc-item--h3" href="#s4">需求挖掘</a>
+          <a class="toc-item toc-item--h3" href="#s4">PRD 模板</a>
+          <a class="toc-item" href="#s5">8.5 竞品分析</a>
+          <a class="toc-item" href="#s6">8.6 技术文档生成</a>
+          <a class="toc-item" href="#s7">8.7 数据分析</a>
+          <a class="toc-item" href="#s8">8.8 DevOps 辅助</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  <script src="/assets/js/nav.js"></script>
+  <script src="/assets/js/search.js"></script>
+  <script>
+    function copyCode(btn) {
+      const code = btn.closest('.code-block').querySelector('code');
+      navigator.clipboard.writeText(code.innerText).then(() => {
+        btn.textContent = '已复制！'; btn.classList.add('is-copied');
+        setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('is-copied'); }, 2000);
+      });
+    }
+    (function () {
+      const ids = ['s1','s2','s3','s4','s5','s6','s7','s8'];
+      const tocLinks = document.querySelectorAll('.toc-item');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('is-active'));
+            const a = document.querySelector(`.toc-item[href="#${e.target.id}"]`);
+            if (a) a.classList.add('is-active');
+          }
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      ids.forEach(id => { const el = document.getElementById(id); if (el) observer.observe(el); });
+    })();
+  </script>
+</body>
+</html>
