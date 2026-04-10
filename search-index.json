@@ -94,5 +94,53 @@
     "chapter": "第三章：CLI 核心功能",
     "href": "/chapters/03-cli-core/index.html#s5",
     "body": "/compact 将对话历史压缩为摘要释放上下文空间，可释放 60-80% 已用空间。与 /clear 的区别：compact 保留摘要，clear 完全清空。token 使用超 70% 时建议压缩。"
+  },
+  {
+    "title": "4.1 .claude 目录结构总览",
+    "chapter": "第四章：.claude 目录完全指南",
+    "href": "/chapters/04-dot-claude/index.html#s1",
+    "body": "两个层级：全局 ~/.claude/ 适用所有项目，项目级 .claude/ 仅当前项目。包含 settings.json、CLAUDE.md、commands/、rules/、skills/、memory/ 目录。项目级配置优先级高于全局配置。"
+  },
+  {
+    "title": "4.2 CLAUDE.md",
+    "chapter": "第四章：.claude 目录完全指南",
+    "href": "/chapters/04-dot-claude/index.html#s2",
+    "body": "CLAUDE.md 是项目说明书，每次启动自动注入系统提示。包含技术栈、目录结构、开发规范、常用命令、禁止操作。支持子目录多层继承。使用 /init 命令自动生成初始文件。"
+  },
+  {
+    "title": "4.3 settings.json 配置",
+    "chapter": "第四章：.claude 目录完全指南",
+    "href": "/chapters/04-dot-claude/index.html#s3",
+    "body": "settings.json 配置项：model 指定模型，permissions.allow/deny 控制工具权限，hooks 配置事件钩子，mcpServers 配置 MCP 服务，env 注入环境变量。支持 glob 语法匹配权限规则。"
+  },
+  {
+    "title": "4.4 自定义斜杠命令",
+    "chapter": "第四章：.claude 目录完全指南",
+    "href": "/chapters/04-dot-claude/index.html#s4",
+    "body": "在 .claude/commands/ 下创建 Markdown 文件定义斜杠命令。文件名即命令名，支持子目录嵌套。使用 $ARGUMENTS 接收参数。常用命令：review/commit/test/docs/refactor/pr。"
+  },
+  {
+    "title": "4.5 Hooks 系统",
+    "chapter": "第四章：.claude 目录完全指南",
+    "href": "/chapters/04-dot-claude/index.html#s5",
+    "body": "Hooks 在特定事件触发时执行 shell 脚本。事件类型：PreToolUse/PostToolUse/Notification/Stop/SubagentStop。PreToolUse 退出码非 0 时阻止工具调用。环境变量：CLAUDE_TOOL_NAME/INPUT/OUTPUT/OUTPUT_PATH。"
+  },
+  {
+    "title": "4.6 Skills",
+    "chapter": "第四章：.claude 目录完全指南",
+    "href": "/chapters/04-dot-claude/index.html#s6",
+    "body": "Skills 是含 frontmatter 元数据的高级命令，支持 TRIGGER 自动触发条件。存放于 skills/ 目录。与斜杠命令的区别：斜杠命令手动调用，Skills 可上下文感知自动推荐。"
+  },
+  {
+    "title": "4.7 Rules",
+    "chapter": "第四章：.claude 目录完全指南",
+    "href": "/chapters/04-dot-claude/index.html#s7",
+    "body": "Rules 存放于 .claude/rules/ 目录，是针对特定场景的专项规则文件。比 CLAUDE.md 更细粒度，可单独启用禁用。适合代码风格、安全约束、框架规范等专项说明。"
+  },
+  {
+    "title": "4.8 Memory 系统",
+    "chapter": "第四章：.claude 目录完全指南",
+    "href": "/chapters/04-dot-claude/index.html#s8",
+    "body": "Memory 系统让 Claude 跨会话保留信息。类型：user/project/feedback/reference。MEMORY.md 是索引文件每次自动加载。主动告知 Claude 需要记忆的内容，它会自动写入 memory/ 目录。"
   }
 ]
