@@ -1,0 +1,25 @@
+# Cloudflare Pages 重定向规则
+
+# 目录路径 → index.html（去掉末尾斜杠访问）
+/chapters/01-intro        /chapters/01-intro/index.html  301
+/chapters/02-cli-start    /chapters/02-cli-start/index.html  301
+/chapters/03-cli-core     /chapters/03-cli-core/index.html   301
+/chapters/04-dot-claude   /chapters/04-dot-claude/index.html 301
+/chapters/05-mcp          /chapters/05-mcp/index.html        301
+/chapters/06-api          /chapters/06-api/index.html        301
+/chapters/07-agent        /chapters/07-agent/index.html      301
+/chapters/08-scenarios    /chapters/08-scenarios/index.html  301
+/chapters/09-projects     /chapters/09-projects/index.html   301
+/chapters/10-faq          /chapters/10-faq/index.html        301
+
+# 短路径别名（便于分享）
+/intro       /chapters/01-intro/index.html       301
+/cli         /chapters/02-cli-start/index.html   301
+/dot-claude  /chapters/04-dot-claude/index.html  301
+/mcp         /chapters/05-mcp/index.html         301
+/api         /chapters/06-api/index.html         301
+/agent       /chapters/07-agent/index.html       301
+/projects    /chapters/09-projects/index.html    301
+/faq         /chapters/10-faq/index.html         301
+
+# SPA 兜底（404 降级到自定义 404 页面，Cloudflare Pages 默认支持 404.html）

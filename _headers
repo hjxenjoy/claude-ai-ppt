@@ -1,0 +1,32 @@
+# Cloudflare Pages 响应头配置
+
+# HTML 页面：不缓存，确保内容更新立即生效
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# CSS / JS：内容哈希更新，长期缓存
+/assets/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/img/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 搜索索引：短期缓存，内容更新后快速刷新
+/search-index.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Content-Type: application/json; charset=utf-8
+
+# 字体：长期缓存
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 全局安全头
+/*
+  X-Content-Type-Options: nosniff
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

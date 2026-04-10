@@ -1,5 +1,18 @@
 name = "claude-ai-tutorial"
-compatibility_date = "2024-01-01"
+compatibility_date = "2025-01-01"
 
 [site]
 bucket = "."
+exclude = [
+  "node_modules",
+  ".git",
+  ".claude",
+  "PLAN.md",
+  "CLAUDE.md",
+  "README.md",
+  "*.toml",
+  "*.json",
+  "search-index.json"  # 通过 _headers 单独控制缓存
+]
+
+# Pages 平台自动处理，无需额外 workers 配置
