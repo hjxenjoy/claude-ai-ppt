@@ -34,5 +34,65 @@
     "chapter": "第一章：认识 Claude",
     "href": "/chapters/01-intro/index.html#s6",
     "body": "四类场景模板：代码生成（TypeScript Hook 实现）、数据分析（电商行为数据漏斗分析）、写作辅助（技术博客改写）、决策辅助（前端框架选型决策矩阵）。"
+  },
+  {
+    "title": "2.1 安装与配置",
+    "chapter": "第二章：Claude Code CLI 入门",
+    "href": "/chapters/02-cli-start/index.html#s1",
+    "body": "Claude Code 安装需要 Node.js 18+，通过 npm install -g @anthropic-ai/claude-code 安装。配置 ANTHROPIC_API_KEY 环境变量或首次运行时交互式登录。"
+  },
+  {
+    "title": "2.2 三种使用模式",
+    "chapter": "第二章：Claude Code CLI 入门",
+    "href": "/chapters/02-cli-start/index.html#s2",
+    "body": "交互式 REPL 支持多轮对话；单次 -p 命令适合脚本自动化；管道输入适合处理文件内容或命令输出。-p 参数支持 --output-format json 和 --cwd 选项。"
+  },
+  {
+    "title": "2.3 权限模式",
+    "chapter": "第二章：Claude Code CLI 入门",
+    "href": "/chapters/02-cli-start/index.html#s3",
+    "body": "三种权限模式：default 每次危险操作前询问确认，auto-approve 自动批准所有操作，manual 通过 settings.json 精细控制。permissions 字段支持 allow 和 deny 规则，使用 glob 语法。"
+  },
+  {
+    "title": "2.4 快捷键速查",
+    "chapter": "第二章：Claude Code CLI 入门",
+    "href": "/chapters/02-cli-start/index.html#s4",
+    "body": "常用快捷键：Enter 发送消息，Shift+Enter 换行，Ctrl+C 中断，Esc 软中断，Esc×2 编辑上条消息，Ctrl+R 搜索历史，Ctrl+L 清屏，Tab 补全文件路径。"
+  },
+  {
+    "title": "2.5 第一个任务：Hello World",
+    "chapter": "第二章：Claude Code CLI 入门",
+    "href": "/chapters/02-cli-start/index.html#s5",
+    "body": "上手实验：创建 Node.js HTTP 服务器，体验 Claude Code 完整工作流：用自然语言描述任务、Claude 生成并执行代码、验证结果、迭代完善。"
+  },
+  {
+    "title": "3.1 斜杠命令完整参考",
+    "chapter": "第三章：CLI 核心功能",
+    "href": "/chapters/03-cli-core/index.html#s1",
+    "body": "内置斜杠命令：/help /clear /compact /model /cost /status /memory /review /init /bug /doctor /upgrade。以 / 开头的命令控制会话行为，不发送给 Claude 处理。"
+  },
+  {
+    "title": "3.2 内置工具系统",
+    "chapter": "第三章：CLI 核心功能",
+    "href": "/chapters/03-cli-core/index.html#s2",
+    "body": "文件操作：Read/Write/Edit/MultiEdit。搜索：Grep/Glob/LS。执行：Bash/WebFetch/WebSearch。协作：Agent/TodoWrite。Claude 自主决定调用哪些工具完成任务。"
+  },
+  {
+    "title": "3.3 文件引用技巧",
+    "chapter": "第三章：CLI 核心功能",
+    "href": "/chapters/03-cli-core/index.html#s3",
+    "body": "使用 @ 语法引用文件：@src/api/auth.ts 单文件引用，@src/components/ 目录引用。精确优于宽泛，大文件先摘要再提问，多文件时说明关联关系。"
+  },
+  {
+    "title": "3.4 大型项目策略",
+    "chapter": "第三章：CLI 核心功能",
+    "href": "/chapters/03-cli-core/index.html#s4",
+    "body": "大型项目三策略：先让 Claude 建立目录地图、拆解任务逐步执行、善用 CLAUDE.md 写入架构说明和禁止操作。避免一次性大任务，从叶子模块开始逐步迁移。"
+  },
+  {
+    "title": "3.5 /compact 与上下文压缩",
+    "chapter": "第三章：CLI 核心功能",
+    "href": "/chapters/03-cli-core/index.html#s5",
+    "body": "/compact 将对话历史压缩为摘要释放上下文空间，可释放 60-80% 已用空间。与 /clear 的区别：compact 保留摘要，clear 完全清空。token 使用超 70% 时建议压缩。"
   }
 ]
